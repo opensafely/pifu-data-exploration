@@ -24,7 +24,9 @@ first_opa = opa.where(
 any_opa = first_opa.exists_for_patient()
 
 # Any personalised followup visits
-any_pfu = opa.outcome_of_attendance.is_in(["4","5"]).exists_for_patient()
+any_pfu = opa.where(
+            opa.outcome_of_attendance.is_in(["4","5"])
+        ).exists_for_patient()
 
 # Number of outpatient visits
 count_opa = opa.count_for_patient()
