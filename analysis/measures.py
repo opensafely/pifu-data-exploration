@@ -1,0 +1,81 @@
+#################################################################
+# This code extracts monthly counts of people on personalised
+#   folloup pathways, stratified by relevant characteristics
+#################################################################
+
+
+from ehrql import months, INTERVAL, Measures, case, when, weeks
+from ehrql.tables.tpp import (
+    patients, 
+    practice_registrations,
+    clinical_events,
+    opa)
+
+
+
+### outpatient stuff
+first_opa = opa.where(
+            opa.appointment_date.is_on_or_between(INTERVAL.start_date, INTERVAL.end_date)
+        ).sort_by(
+            opa.appointment_date
+        ).first_for_patient()
+
+# Any outpatient visit
+any_opa = first_opa.exists_for_patient()
+
+# Any personalised followup visits
+any_pfu = opa.where(
+            opa.outcome_of_attendance.is_in(["4","5"])
+        ).exists_for_patient()
+
+# Number of outpatient visits
+count_opa = opa.count_for_patient()
+count_pfu = opa.where(
+        opa.outcome_of_attendance.is_in(["4","5"])
+    ).count_for_patient()
+
+# Other columnsof interest
+treatment_function_code = opa.treatment_function_code
+
+
+### Measures setup
+measures = Measures()
+measures.configure_disclosure_control(enabled=False)
+measures.define_defaults(intervals=months(48).starting_on("2021-01-01"))
+measures.configure_dummy_data(population_size=10000)
+
+denominator = (
+        (patients.age_on(INTERVAL.start_date) >= 0) 
+        & (patients.age_on(INTERVAL.start_date) < 110)
+        & ((patients.sex == "male") | (patients.sex == "female"))
+        & (patients.date_of_death.is_after(INTERVAL.start_date) | patients.date_of_death.is_null())
+        & (practice_registrations.for_patient_on(INTERVAL.start_date).exists_for_patient())
+    )
+
+### 
+
+# Number of people with an outpatient visit
+measures.define_measure(
+    name="count_opa",
+    numerator=count_opa,
+    denominator=denominator,
+    )
+measures.define_measure(
+    name="patients_opa",
+    numerator=any_opa,
+    denominator=denominator,
+    )
+
+# Number of people with an a personalised follow-up visit
+measures.define_measure(
+    name="count_pfu",
+    numerator=count_pfu,
+    denominator=denominator,
+    )
+measures.define_measure(
+    name="patients_pfu",
+    numerator=any_pfu,
+    denominator=denominator,
+    )
+
+
