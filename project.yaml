@@ -6,3 +6,9 @@ actions:
     outputs:
       highly_sensitive:
         dataset: output/dataset.csv.gz
+
+  measures:
+    run: ehrql:v1 generate-measures analysis/measures.py --output output/measures/measures.csv
+    outputs:
+      moderately_sensitive:
+        dataset: output/measures/measures.csv

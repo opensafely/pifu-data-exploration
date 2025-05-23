@@ -1,3 +1,8 @@
+#################################################################
+# This code extracts monthly counts of people on personalised
+#   folloup pathways, stratified by relevant characteristics
+#################################################################
+
 
 from ehrql import months, INTERVAL, Measures, case, when, weeks
 from ehrql.tables.tpp import (
@@ -7,40 +12,34 @@ from ehrql.tables.tpp import (
     opa)
 
 
-### Demographics
-
-#sex = patients.sex
-#age = patients.age_on("2022-04-01")
-#age_group = case(
-#        when(age < 30).then("18-29"),
-#        when(age < 40).then("30-39"),
-#        when(age < 50).then("40-49"),
-#        when(age < 60).then("50-59"),
-#        when(age < 70).then("60-69"),
-#        when(age < 80).then("70-79"),
-#        when(age < 90).then("80-89"),
-#        when(age >= 90).then("90+"),
-#        otherwise="missing",
-#)
 
 ### outpatient stuff
-
-opa = opa.where(
+first_opa = opa.where(
             opa.appointment_date.is_on_or_between(INTERVAL.start_date, INTERVAL.end_date)
         ).sort_by(
             opa.appointment_date
         ).first_for_patient()
-any_opa = opa.exists_for_patient()
 
+# Any outpatient visit
+any_opa = first_opa.exists_for_patient()
+
+# Any personalised followup visits
+any_pfu = opa.outcome_of_attendance.is_in(["4","5"])
+
+# Number of outpatient visits
+count_opa = opa.count_for_patient()
+count_pfu = opa.where(
+        opa.outcome_of_attendance.is_in(["4","5"])
+    ).count_for_patient()
+
+# Other columnsof interest
 treatment_function_code = opa.treatment_function_code
-outcome_of_attendance = opa.outcome_of_attendance
-personal_pathway = opa.outcome_of_attendance.is_in("4","5")
 
-### measures setup
 
+### Measures setup
 measures = Measures()
 measures.configure_disclosure_control(enabled=False)
-measures.define_defaults(intervals=weeks(208).starting_on("2021-01-01"))
+measures.define_defaults(intervals=months(48).starting_on("2021-01-01"))
 measures.configure_dummy_data(population_size=10000)
 
 denominator = (
@@ -53,36 +52,28 @@ denominator = (
 
 ### 
 
+# Number of people with an outpatient visit
 measures.define_measure(
-    name="any_opa",
+    name="count_opa",
+    numerator=count_opa,
+    denominator=denominator,
+    )
+measures.define_measure(
+    name="patients_opa",
     numerator=any_opa,
     denominator=denominator,
     )
 
+# Number of people with an a personalised follow-up visit
 measures.define_measure(
-    name="opa_by_specialty",
-    numerator=any_opa,
+    name="count_pfu",
+    numerator=count_pfu,
     denominator=denominator,
-    group_by={"treatment_function_code": treatment_function_code}
+    )
+measures.define_measure(
+    name="patients_pfu",
+    numerator=any_pfu,
+    denominator=denominator,
     )
 
-measures.define_measure(
-    name="outcome_of_attendance",
-    numerator=any_opa,
-    denominator=denominator,
-    group_by={"outcome_of_attendance": outcome_of_attendance}
-    )
 
-measures.define_measure(
-    name="personalised_pathway",
-    numerator=any_opa,
-    denominator=denominator,
-    group_by={"personal_pathway": personal_pathway}
-    )
-
-measures.define_measure(
-    name="personalised_pathway",
-    numerator=personal_pathway,
-    denominator=denominator,
-    group_by={"treatment_function_code": treatment_function_code}
-    )
