@@ -41,8 +41,8 @@ treatment_function_code = opa.treatment_function_code
 ### Measures setup
 measures = Measures()
 measures.configure_disclosure_control(enabled=False)
-measures.define_defaults(intervals=months(48).starting_on("2021-01-01"))
-measures.configure_dummy_data(population_size=10000)
+measures.define_defaults(intervals=months(72).starting_on("2019-01-01"))
+measures.configure_dummy_data(population_size=1000)
 
 denominator = (
         (patients.age_on(INTERVAL.start_date) >= 0) 
