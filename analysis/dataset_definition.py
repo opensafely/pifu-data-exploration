@@ -1,7 +1,5 @@
 #################################################################
 # This code extracts all people who had an outpatient visit
-#   where it was recorded that they were moved to or/ discharged to
-#   a personalised outpatient follow-up pathway
 #################################################################
 
 
