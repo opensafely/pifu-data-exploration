@@ -12,30 +12,22 @@ from ehrql.tables.tpp import (
     opa)
 
 
+# Extract data in interval
+all_opa = opa.where(
+        opa.appointment_date.is_on_or_between(INTERVAL.start_date, INTERVAL.end_date)
+    )
+all_pfu = opa.where(
+        opa.appointment_date.is_on_or_between(INTERVAL.start_date, INTERVAL.end_date)
+        & opa.outcome_of_attendance.is_in(["4","5"])
+    )
 
-### outpatient stuff
-first_opa = opa.where(
-            opa.appointment_date.is_on_or_between(INTERVAL.start_date, INTERVAL.end_date)
-        ).sort_by(
-            opa.appointment_date
-        ).first_for_patient()
+# Any outpatient visit - total and personalised 
+any_opa = all_opa.exists_for_patient()
+any_pfu = all_pfu.exists_for_patient()
 
-# Any outpatient visit
-any_opa = first_opa.exists_for_patient()
-
-# Any personalised followup visits
-any_pfu = opa.where(
-            opa.outcome_of_attendance.is_in(["4","5"])
-        ).exists_for_patient()
-
-# Number of outpatient visits
-count_opa = opa.count_for_patient()
-count_pfu = opa.where(
-        opa.outcome_of_attendance.is_in(["4","5"])
-    ).count_for_patient()
-
-# Other columnsof interest
-treatment_function_code = opa.treatment_function_code
+# Number of outpatient visits - total and personalised
+count_opa = all_opa.count_for_patient()
+count_pfu = all_pfu.count_for_patient()
 
 
 ### Measures setup
@@ -60,6 +52,7 @@ measures.define_measure(
     numerator=count_opa,
     denominator=denominator,
     )
+
 measures.define_measure(
     name="patients_opa",
     numerator=any_opa,
@@ -70,12 +63,13 @@ measures.define_measure(
 measures.define_measure(
     name="count_pfu",
     numerator=count_pfu,
-    denominator=denominator,
+    denominator=denominator & any_opa,
     )
+
 measures.define_measure(
     name="patients_pfu",
     numerator=any_pfu,
-    denominator=denominator,
+    denominator=denominator & any_opa,
     )
 
 
