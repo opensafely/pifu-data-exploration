@@ -72,7 +72,7 @@ dataset.age_group = case(
         otherwise="missing",
 )
 
-dataset.region = practice_registrations.for_patient_on(dataset.first_pfu_date).practice_nuts1_region_name
+dataset.region = practice_registrations.for_patient_on(dataset.first_opa_date).practice_nuts1_region_name
 
 
 # define population - everyone with an outpatient visit
