@@ -18,5 +18,12 @@ actions:
     needs: [generate_dataset]
     outputs:
       moderately_sensitive:
-        table1: output/dataset/table.csv
-        table2: output/dataset/table_pfu.csv
+        table1: output/processed/table.csv
+        table2: output/processed/table_pfu.csv
+
+  time_series:
+    run: r:latest analysis/process/measures_process.R
+    needs: [measures]
+    outputs:
+      moderately_sensitive:
+        timeseries: output/processed/time_series.csv
