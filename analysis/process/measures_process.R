@@ -36,7 +36,7 @@ count_pfu <- measures %>%
 
 patients_pfu <- measures %>%
   rename(num_pfu_patients = numerator) %>%
-  subset(measure == "patients_opa")  %>%
+  subset(measure == "patients_pfu")  %>%
   select(c("month", "num_pfu_patients"))
 
 all <- merge(count_opa, patients_opa) %>%
