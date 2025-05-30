@@ -4,10 +4,16 @@ library('tidyverse')
 library('fs')
 
 # Create directory
-dir_create(here::here("output", "dataset"), showWarnings = FALSE, recurse = TRUE)
+dir_create(here::here("output", "processed"), showWarnings = FALSE, recurse = TRUE)
+
+# Rounding and redaction
+rounding <- function(vars) {
+  case_when(vars == 0 ~ 0,
+            vars > 7 ~ round(vars / 5) * 5)
+}
+
 
 dataset <- read_csv(here::here("output", "dataset.csv.gz")) 
-
 
 # Create frequency distribution
 freq <- function(df, var, name) {
@@ -27,7 +33,8 @@ table_pfu <- rbind(
   freq(pfu, first_pfu_year, "first PFU year"),
   freq(pfu, treatment_function_code, "treatment function code")
 ) %>%
-  subset(variable != "treatment function code" | ((variable == "treatment function code" & count >= 100)))
+  subset(variable != "treatment function code" | ((variable == "treatment function code" & count >= 100))) %>%
+  mutate(count = rounding(count), total = rounding(total))
 
 # Everyone with outpatient visit
 table <- rbind(
@@ -37,8 +44,10 @@ table <- rbind(
   freq(dataset, treatment_function_code, "treatment function code"),
   freq(dataset, any_pfu, "personalised follow-up")
 ) %>%
-  subset(variable != "treatment function code" | ((variable == "treatment function code" & count >= 100)))
+  subset(variable != "treatment function code" | ((variable == "treatment function code" & count >= 100))) %>%
+  mutate(count = rounding(count), total = rounding(total))
+
 
 # Save
-write.csv(table_pfu, file = here::here("output", "dataset", "table_pfu.csv"), row.names = FALSE)
-write.csv(table, file = here::here("output", "dataset", "table.csv"), row.names = FALSE)
+write.csv(table_pfu, file = here::here("output", "processed", "table_pfu.csv"), row.names = FALSE)
+write.csv(table, file = here::here("output", "processed", "table.csv"), row.names = FALSE)
