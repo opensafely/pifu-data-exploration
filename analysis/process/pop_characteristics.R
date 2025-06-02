@@ -111,3 +111,5 @@ table <- rbind(
 write.csv(table_pfu_all, file = here::here("output", "processed", "table_pfu.csv"), row.names = FALSE)
 write.csv(table, file = here::here("output", "processed", "table.csv"), row.names = FALSE)
 write.csv(table_rheum, file = here::here("output", "processed", "table_rheum.csv"), row.names = FALSE)
+
+
