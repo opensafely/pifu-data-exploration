@@ -16,6 +16,7 @@ all_opa = opa.where(
         opa.appointment_date
 )
 
+
 # everyone with an outpatient visit
 first_opa = all_opa.where(
         all_opa.appointment_date.is_on_or_after("2021-01-01")
@@ -32,9 +33,14 @@ first_pfu = all_opa.where(
     ).first_for_patient()
 
 
+dataset.pfu_cat = first_pfu.outcome_of_attendance
+
 dataset.first_pfu_date = first_pfu.appointment_date
 dataset.first_pfu_year = dataset.first_pfu_date.year
-dataset.any_pfu = dataset.first_pfu_date.is_not_null()
+dataset.any_pfu = dataset.first_pfu_date.is_not_null() 
+dataset.count_pfu = all_opa.where(
+        all_opa.outcome_of_attendance.is_in(["4","5"]) 
+    ).count_for_patient() # number of pfu records
 
 dataset.first_opa_date = first_opa.appointment_date
 dataset.first_opa_year = dataset.first_opa_date.year
@@ -77,7 +83,7 @@ dataset.region = practice_registrations.for_patient_on(dataset.first_opa_date).p
 
 # define population - everyone with an outpatient visit
 dataset.define_population(
-    (dataset.age >= 0) 
+    (dataset.age >= 18) 
     & (dataset.age < 110) 
     & ((patients.sex == "male") | (patients.sex == "female"))
     & (patients.date_of_death.is_after(dataset.first_opa_date) | patients.date_of_death.is_null())
