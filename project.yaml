@@ -20,6 +20,7 @@ actions:
       moderately_sensitive:
         table1: output/processed/table.csv
         table2: output/processed/table_pfu.csv
+        table3: output/processed/table_rheum.csv
 
   time_series:
     run: r:latest analysis/process/measures_process.R
