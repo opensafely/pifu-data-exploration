@@ -27,7 +27,8 @@ freq <- function(df, var, name) {
 
 
 
-dataset <- read_csv(here::here("output", "dataset.csv.gz")) 
+dataset <- read_csv(here::here("output", "dataset.csv.gz")) %>%
+  mutate(count_pfu_gp = ifelse(count_pfu >= 10, "10+", as.character(count_pfu)))
 
 pfu <- dataset %>% subset(any_pfu == TRUE)
 pfu_moved <- dataset %>% subset(any_pfu == TRUE & pfu_cat == "4")
@@ -42,7 +43,7 @@ table_pfu <- rbind(
     freq(pfu, region, "region"),
     freq(pfu, first_pfu_year, "first PFU year"),
     freq(pfu, treatment_function_code, "treatment function code"),
-    freq(pfu, count_pfu, "number of pfu records")
+    freq(pfu, count_pfu_gp, "number of pfu records")
   ) %>%
   mutate(pfu_all_count = rounding(count), pfu_all_total = rounding(total)) %>%
   subset(variable != "treatment function code" | ((variable == "treatment function code" & count >= 100))) %>%
@@ -56,7 +57,7 @@ table_pfu_moved <- rbind(
   freq(pfu_moved, first_pfu_year, "first PFU year"),
   freq(pfu_moved, treatment_function_code, "treatment function code"),
   freq(pfu_moved, pfu_cat, "personalised followup category"),
-  freq(pfu_moved, count_pfu, "number of pfu records")
+  freq(pfu_moved, count_pfu_gp, "number of pfu records")
 ) %>%
   mutate(pfu_moved_count = rounding(count), pfu_moved_total = rounding(total)) %>%
   subset(variable != "treatment function code" | ((variable == "treatment function code" & count >= 100))) %>%
@@ -70,7 +71,7 @@ table_pfu_discharged <- rbind(
   freq(pfu_discharged, first_pfu_year, "first PFU year"),
   freq(pfu_discharged, treatment_function_code, "treatment function code"),
   freq(pfu_discharged, pfu_cat, "personalised followup category"),
-  freq(pfu_discharged, count_pfu, "number of pfu records")
+  freq(pfu_discharged, count_pfu_gp, "number of pfu records")
 ) %>%
   mutate(pfu_discharged_count = rounding(count), pfu_discharged_total = rounding(total)) %>%
   subset(variable != "treatment function code" | ((variable == "treatment function code" & count >= 100))) %>%
@@ -84,15 +85,16 @@ table_rheum <- rbind(
     freq(pfu_rheum, first_pfu_year, "first PFU year"),
     freq(pfu_rheum, treatment_function_code, "treatment function code"),
     freq(pfu_rheum, pfu_cat, "personalised followup category"),
-    freq(pfu_rheum, count_pfu, "number of pfu records")
+    freq(pfu_rheum, count_pfu_gp, "number of pfu records")
   ) %>%
     mutate(pfu_rheum_count = rounding(count), pfu_rheum_total = rounding(total)) %>%
     select(!c("count", "total"))
 
 
 # Combine into one table
-table_pfu_all <- merge(table_pfu, table_rheum) %>% merge(table_pfu_moved) %>% merge(table_pfu_discharged)
-
+table_pfu_all <- merge(table_pfu, table_rheum, all = T) %>% 
+  merge(table_pfu_moved, all = T) %>% 
+  merge(table_pfu_discharged, all = T)
 
 
 # Everyone with outpatient visit
