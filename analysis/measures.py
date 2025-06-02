@@ -40,7 +40,7 @@ count_pfu = all_pfu.count_for_patient()
 count_pfu_moved = all_pfu.where(
         all_pfu.outcome_of_attendance == "4"
     ).count_for_patient()
-count_pfu_discharged = all_pfu.where(
+count_pfu_dischareed = all_pfu.where(
         all_pfu.outcome_of_attendance == "5"
     ).count_for_patient()
 count_pfu_rheum = all_pfu.where(
