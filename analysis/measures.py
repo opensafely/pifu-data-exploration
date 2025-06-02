@@ -37,7 +37,7 @@ measures.define_defaults(intervals=months(72).starting_on("2019-01-01"))
 measures.configure_dummy_data(population_size=1000)
 
 denominator = (
-        (patients.age_on(INTERVAL.start_date) >= 0) 
+        (patients.age_on(INTERVAL.start_date) >= 18) 
         & (patients.age_on(INTERVAL.start_date) < 110)
         & ((patients.sex == "male") | (patients.sex == "female"))
         & (patients.date_of_death.is_after(INTERVAL.start_date) | patients.date_of_death.is_null())
