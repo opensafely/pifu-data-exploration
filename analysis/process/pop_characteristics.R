@@ -28,7 +28,7 @@ freq <- function(df, var, name) {
 
 
 dataset <- read_csv(here::here("output", "dataset.csv.gz")) %>%
-  mutate(count_pfu_gp = ifelse(count_pfu >= 10, "10+", as.character(count_pfu)))
+  mutate(count_pfu_gp = ifelse(count_pfu >= 6, "6+", as.character(count_pfu)))
 
 pfu <- dataset %>% subset(any_pfu == TRUE)
 pfu_moved <- dataset %>% subset(any_pfu == TRUE & pfu_cat == "4")

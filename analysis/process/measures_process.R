@@ -81,15 +81,15 @@ patients_pfu_discharged <- measures %>%
 
 
 # combined
-all <- merge(count_opa, patients_opa) %>%
-  merge(count_pfu) %>%
-  merge(patients_pfu) %>%
-  merge(count_pfu_rheum) %>%
-  merge(patients_pfu_rheum) %>%
-  merge(count_pfu_moved) %>%
-  merge(patients_pfu_moved) %>%
-  merge(count_pfu_discharged) %>%
-  merge(patients_pfu_discharged)
+all <- merge(count_opa, patients_opa, all = T) %>%
+  merge(count_pfu, all = T) %>%
+  merge(patients_pfu, all = T) %>%
+  merge(count_pfu_rheum, all = T) %>%
+  merge(patients_pfu_rheum, all = T) %>%
+  merge(count_pfu_moved, all = T) %>%
+  merge(patients_pfu_moved, all = T) %>%
+  merge(count_pfu_discharged, all = T) %>%
+  merge(patients_pfu_discharged, all = T)
 
 
 # Save
