@@ -80,7 +80,7 @@ table_pfu_discharged <- rbind(
   freq(pfu_discharged, pfu_cat, "personalised followup category"),
   freq(pfu_discharged, count_pfu_gp, "number of pfu records")
 ) %>%
-  mutate(pfu_discharged_count = count, pfu_discharged_total = rtotal) %>%
+  mutate(pfu_discharged_count = count, pfu_discharged_total = total) %>%
   subset(variable != "treatment function code" | ((variable == "treatment function code" & count >= 100))) %>%
   select(!c("count", "total"))
 
