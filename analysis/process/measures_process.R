@@ -89,6 +89,7 @@ all <- merge(count_opa, patients_opa, all = T) %>%
   merge(patients_pfu_moved, all = T) %>%
   merge(count_pfu_discharged, all = T) %>%
   merge(patients_pfu_discharged, all = T) %>%
+  replace(is.na(.), 0) %>%
   mutate(across(c(starts_with(c("count","patients","total"))), rounding))
 
 
