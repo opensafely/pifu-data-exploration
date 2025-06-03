@@ -1,3 +1,10 @@
+#####################################################
+# This code creates tables describing the
+# demographics of people with outpatient visits,
+# and on personalised follow-up pathways
+# ###################################################
+
+
 
 # Import libraries #
 library('tidyverse')
@@ -45,7 +52,7 @@ table_pfu <- rbind(
     freq(pfu, treatment_function_code, "treatment function code"),
     freq(pfu, count_pfu_gp, "number of pfu records")
   ) %>%
-  mutate(pfu_all_count = rounding(count), pfu_all_total = rounding(total)) %>%
+  mutate(pfu_all_count = count, pfu_all_total = total) %>%
   subset(variable != "treatment function code" | ((variable == "treatment function code" & count >= 100))) %>%
   select(!c("count", "total"))
 
@@ -59,7 +66,7 @@ table_pfu_moved <- rbind(
   freq(pfu_moved, pfu_cat, "personalised followup category"),
   freq(pfu_moved, count_pfu_gp, "number of pfu records")
 ) %>%
-  mutate(pfu_moved_count = rounding(count), pfu_moved_total = rounding(total)) %>%
+  mutate(pfu_moved_count = count, pfu_moved_total = total) %>%
   subset(variable != "treatment function code" | ((variable == "treatment function code" & count >= 100))) %>%
   select(!c("count", "total"))
 
@@ -73,7 +80,7 @@ table_pfu_discharged <- rbind(
   freq(pfu_discharged, pfu_cat, "personalised followup category"),
   freq(pfu_discharged, count_pfu_gp, "number of pfu records")
 ) %>%
-  mutate(pfu_discharged_count = rounding(count), pfu_discharged_total = rounding(total)) %>%
+  mutate(pfu_discharged_count = count, pfu_discharged_total = rtotal) %>%
   subset(variable != "treatment function code" | ((variable == "treatment function code" & count >= 100))) %>%
   select(!c("count", "total"))
 
@@ -87,14 +94,15 @@ table_rheum <- rbind(
     freq(pfu_rheum, pfu_cat, "personalised followup category"),
     freq(pfu_rheum, count_pfu_gp, "number of pfu records")
   ) %>%
-    mutate(pfu_rheum_count = rounding(count), pfu_rheum_total = rounding(total)) %>%
+    mutate(pfu_rheum_count = count, pfu_rheum_total = total) %>%
     select(!c("count", "total"))
 
 
 # Combine into one table
 table_pfu_all <- merge(table_pfu, table_rheum, all = T) %>% 
   merge(table_pfu_moved, all = T) %>% 
-  merge(table_pfu_discharged, all = T)
+  merge(table_pfu_discharged, all = T) %>%
+  mutate(across(c(starts_with("pfu")), rounding))  
 
 
 # Everyone with outpatient visit
