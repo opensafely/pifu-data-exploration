@@ -16,8 +16,7 @@ rounding <- function(vars) {
 
 measures <- read_csv(here::here("output", "measures", "measures.csv")) %>%
   select(c("measure", "interval_start", "numerator", "denominator")) %>%
-  rename(month = interval_start) %>%
-  mutate(numerator = rounding(numerator), denominator = rounding(denominator))
+  rename(month = interval_start) 
 
 
 # all outpatient visits
@@ -89,7 +88,8 @@ all <- merge(count_opa, patients_opa, all = T) %>%
   merge(count_pfu_moved, all = T) %>%
   merge(patients_pfu_moved, all = T) %>%
   merge(count_pfu_discharged, all = T) %>%
-  merge(patients_pfu_discharged, all = T)
+  merge(patients_pfu_discharged, all = T) %>%
+  mutate(across(c(starts_with(c("count","patients","total"))), rounding))
 
 
 # Save
