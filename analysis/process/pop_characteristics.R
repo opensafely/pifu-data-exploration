@@ -102,6 +102,8 @@ table_rheum <- rbind(
 table_pfu_all <- merge(table_pfu, table_rheum, all = T) %>% 
   merge(table_pfu_moved, all = T) %>% 
   merge(table_pfu_discharged, all = T) %>%
+  fill(ends_with("total")) %>%
+  replace(is.na(.), 0) %>%
   mutate(across(c(starts_with("pfu")), rounding))  
 
 
