@@ -51,7 +51,7 @@ count_pfu_rheum = all_pfu.where(
 ### Measures setup
 measures = Measures()
 measures.configure_disclosure_control(enabled=False)
-measures.define_defaults(intervals=months(60).starting_on("2020-01-01"))
+measures.define_defaults(intervals=months(39).starting_on("2022-01-01"))
 measures.configure_dummy_data(population_size=1000)
 
 denominator = (

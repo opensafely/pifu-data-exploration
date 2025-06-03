@@ -11,7 +11,7 @@ dataset.configure_dummy_data(population_size=10000)
 
 # all outpatient visits - to measure before / after start of personalised follow-up
 all_opa = opa.where(
-        opa.appointment_date.is_on_or_after("2020-01-01")
+        opa.appointment_date.is_on_or_after("2022-06-01")
     ).sort_by(
         opa.appointment_date
 )
@@ -19,7 +19,7 @@ all_opa = opa.where(
 
 # everyone with an outpatient visit
 first_opa = all_opa.where(
-        all_opa.appointment_date.is_on_or_after("2021-01-01")
+        all_opa.appointment_date.is_on_or_after("2022-06-01")
     ).sort_by(
         all_opa.appointment_date
     ).first_for_patient()
@@ -27,7 +27,7 @@ first_opa = all_opa.where(
 # first personalised pathway record
 first_pfu = all_opa.where(
         all_opa.outcome_of_attendance.is_in(["4","5"]) 
-        & all_opa.appointment_date.is_on_or_after("2021-01-01")
+        & all_opa.appointment_date.is_on_or_after("2022-06-01")
     ).sort_by(
         all_opa.appointment_date
     ).first_for_patient()
