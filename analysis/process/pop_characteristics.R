@@ -54,7 +54,6 @@ table_pfu <- rbind(
     freq(pfu, count_pfu_gp, "number of pfu records")
   ) %>%
   mutate(pfu_all_count = count, pfu_all_total = total) %>%
-  subset(variable != "treatment function code" | ((variable == "treatment function code" & count >= 100))) %>%
   select(!c("count", "total"))
 
 # People "moved" to personalised follow-up only (outcome_of_attendance = 4)
@@ -68,7 +67,6 @@ table_pfu_moved <- rbind(
   freq(pfu_moved, count_pfu_gp, "number of pfu records")
 ) %>%
   mutate(pfu_moved_count = count, pfu_moved_total = total) %>%
-  subset(variable != "treatment function code" | ((variable == "treatment function code" & count >= 100))) %>%
   select(!c("count", "total"))
 
 # People "discharged" to personalised follow-up only (outcome_of_attendance = 5)
@@ -82,7 +80,6 @@ table_pfu_discharged <- rbind(
   freq(pfu_discharged, count_pfu_gp, "number of pfu records")
 ) %>%
   mutate(pfu_discharged_count = count, pfu_discharged_total = total) %>%
-  subset(variable != "treatment function code" | ((variable == "treatment function code" & count >= 100))) %>%
   select(!c("count", "total"))
 
 # People with rheumatology personalised follow-up only
@@ -117,7 +114,6 @@ table <- rbind(
     freq(dataset, treatment_function_code, "treatment function code"),
     freq(dataset, any_pfu, "personalised follow-up")
   ) %>%
-    subset(variable != "treatment function code" | ((variable == "treatment function code" & count >= 100))) %>%
     mutate(count = rounding(count), total = rounding(total),
            category = ifelse(is.na(category), "missing", category))
 
