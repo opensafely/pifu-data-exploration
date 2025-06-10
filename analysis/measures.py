@@ -4,22 +4,38 @@
 #################################################################
 
 
-from ehrql import months, INTERVAL, Measures, case, when, weeks
+from ehrql import months, INTERVAL, Measures
 from ehrql.tables.tpp import (
     patients, 
     practice_registrations,
-    clinical_events,
     opa)
 
 
-# Extract data in interval
+# OPA checks
+check_opa = opa.where(
+        opa.appointment_date.is_on_or_between(INTERVAL.start_date, INTERVAL.end_date)
+    ).sort_by(
+        opa.appointment_date
+    ).first_for_patient()
+
+check_pfu = check_opa.outcome_of_attendance.is_in(["4","5"])
+consult_medium = check_opa.consultation_medium_used
+attendance_status = check_opa.attendance_status
+first_attendance = check_opa.first_attendance
+
+
+# For study
 all_opa = opa.where(
         opa.appointment_date.is_on_or_between(INTERVAL.start_date, INTERVAL.end_date)
+        & opa.attendance_status.is_in(["5","6"])
     )
+
 all_pfu = opa.where(
         opa.appointment_date.is_on_or_between(INTERVAL.start_date, INTERVAL.end_date)
+        & opa.attendance_status.is_in(["5","6"])
         & opa.outcome_of_attendance.is_in(["4","5"])
     )
+
 
 # Any outpatient visit - total and personalised 
 any_opa = all_opa.exists_for_patient()
@@ -63,6 +79,33 @@ denominator = (
     )
 
 ### 
+
+
+# OPA descriptive
+measures.define_measure(
+    name="consult_medium",
+    numerator=any_opa,
+    denominator=any_opa,
+    group_by={"consult_medium": consult_medium,
+              "any_pfu": check_pfu}
+    )
+
+measures.define_measure(
+    name="attendance_status",
+    numerator=any_opa,
+    denominator=any_opa,
+    group_by={"attendance_status": attendance_status,
+              "any_pfu": check_pfu}
+    )
+
+measures.define_measure(
+    name="first_attendance",
+    numerator=any_opa,
+    denominator=any_opa,
+    group_by={"first_attendance": first_attendance,
+              "any_pfu": check_pfu}
+    )
+
 
 # Number of people with an outpatient visit
 measures.define_measure(
@@ -129,4 +172,3 @@ measures.define_measure(
     numerator=any_pfu_discharged,
     denominator=denominator & any_pfu,
     )
-
