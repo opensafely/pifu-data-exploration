@@ -28,3 +28,13 @@ actions:
     outputs:
       moderately_sensitive:
         timeseries: output/processed/time_series.csv
+
+  time_between_visits:
+    run: r:latest analysis/process/visits_before_after.R
+    needs: [generate_dataset]
+    outputs:
+      moderately_sensitive:
+        timeseries: output/processed/summary_stats.csv
+        figure: output/processed/figures/time_to_next_visit.png
+      highly_sensitive:
+        times: output/processed/time_to_next_visit.csv
