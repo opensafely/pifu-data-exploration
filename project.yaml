@@ -34,7 +34,8 @@ actions:
     needs: [generate_dataset]
     outputs:
       moderately_sensitive:
-        timeseries: output/processed/summary_stats.csv
+        summ_stats1: output/processed/summary_stats.csv
+        summ_stats2: output/processed/time_summary_stats.csv
         figure: output/processed/figures/time_to_next_visit.png
       highly_sensitive:
         times: output/processed/time_to_next_visit.csv
