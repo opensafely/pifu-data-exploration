@@ -99,7 +99,7 @@ measures.define_measure(
 
 measures.define_measure(
     name="patients_pfu_rheum",
-    numerator=any_pfu,
+    numerator=any_pfu_rheum,
     denominator=denominator & any_pfu,
     )
 
