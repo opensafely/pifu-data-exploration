@@ -28,12 +28,13 @@ rounding <- function(vars) {
 dataset <- read_csv(here::here("output", "dataset.csv.gz")) %>%
   mutate_at(vars(starts_with(c("before_3yr_date","after_date","first_pfu_date","first_opa_date"))), 
             as.Date, format="%Y-%m-%d") %>%
-  mutate(last_date = as.Date("2025-03-30"))
+  mutate(last_date = as.Date("2025-03-30")) %>%
+  subset(any_pfu == TRUE)
 
 
 # summarise columns
 dataset_summ <- dataset %>% 
-  summary() %>%
+  summary(na.rm = TRUE) %>%
   as.data.frame()
 
 # calculate time between visits and create censoring variable
@@ -98,8 +99,16 @@ censor <- reshape2::melt(times, id = c("patient_id", "first_pfu_date", "last_dat
 both <- merge(days, censor) %>%
   mutate(days = as.numeric(days), censor = as.numeric(censor))
 
+time_summ <- both %>%
+  mutate(across(starts_with(c("after_time","before_time")), 
+          ~if_else(censor == 0, NA, .))) %>%
+  summary(na.rm = TRUE) %>%
+  as.data.frame()
+  
+
 # save
 write.csv(dataset_summ, file = here::here("output", "processed", "summary_stats.csv"), row.names = FALSE)
+write.csv(time_summ, file = here::here("output", "processed", "time_summary_stats.csv"), row.names = FALSE)
 write.csv(both, file = here::here("output", "processed", "time_to_next_visit.csv"), row.names = FALSE)
 
 
