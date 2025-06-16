@@ -149,7 +149,7 @@ table_rheum <- rbind(
   freq(treatment_function_code, "treatment function code"),
   freq(any_pfu, "personalised follow-up")
 ) %>%
-  mutate(count = rounding(count_rheum), total = rounding(total_rheum),
+  mutate(count = rounding(count), total = rounding(total),
          category = ifelse(is.na(category), "missing", category))
 
 
