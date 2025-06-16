@@ -51,19 +51,24 @@ dataset.pfu_treatment_function_code = first_pfu.treatment_function_code
 ###################################
 
 # outpatient visits before start of personalised followup
+dataset.before_3yr = all_opa.where(
+        all_opa.appointment_date.is_on_or_between(dataset.first_pfu_date - years(3), dataset.first_pfu_date - days(1))
+        & dataset.any_pfu
+    ).count_for_patient()
+
 dataset.before_2yr = all_opa.where(
-        all_opa.appointment_date.is_on_or_between(dataset.first_pfu_date - years(2), dataset.first_pfu_date)
+        all_opa.appointment_date.is_on_or_between(dataset.first_pfu_date - years(2), dataset.first_pfu_date - days(1))
         & dataset.any_pfu
     ).count_for_patient()
 
 dataset.before_1yr = all_opa.where(
-        all_opa.appointment_date.is_on_or_between(dataset.first_pfu_date - years(1), dataset.first_pfu_date)
+        all_opa.appointment_date.is_on_or_between(dataset.first_pfu_date - years(1), dataset.first_pfu_date - days(1))
         & dataset.any_pfu
     ).count_for_patient()
 
 # outpatient visits 1 year after start of personalised followup
 dataset.after_1yr = all_opa.where(
-        all_opa.appointment_date.is_on_or_between(dataset.first_pfu_date, dataset.first_pfu_date + years(1))
+        all_opa.appointment_date.is_on_or_between(dataset.first_pfu_date + days(1), dataset.first_pfu_date + years(1))
         & dataset.any_pfu
     ).count_for_patient()
 

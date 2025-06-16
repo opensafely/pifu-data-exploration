@@ -5,7 +5,6 @@
 # ###################################################
 
 
-
 # Import libraries #
 library('tidyverse')
 library('fs')
@@ -174,16 +173,18 @@ write.csv(table_rheum, file = here::here("output", "processed", "table_rheum.csv
 ## Function to calculate median/IQR
 options(scipen = 999)
 
-quantile <- scales::percent(c(.25,.5,.75))
+quantile <- scales::percent(c(0,.25,.5,.75,100))
   
 
 visits <- pfu %>%
   subset(first_pfu_year < 2025) %>%
   summarise_at(vars(c("before_2yr","before_1yr","after_1yr","days_from_last_visit","days_to_next_visit")),
-               list(p25 = ~quantile(., .25, na.rm = TRUE),
+               list(min = ~quantile(., 0, na.rm = TRUE),
+                    p25 = ~quantile(., .25, na.rm = TRUE),
                     p50 = ~quantile(., .5, na.rm=TRUE),
-                    p75 = ~quantile(., .75, na.rm=TRUE))) %>%
-  reshape2::melt()
+                    p75 = ~quantile(., .75, na.rm=TRUE),
+                    max = ~quantile(., 1, na.rm = TRUE))) %>%
+  reshape2::melt() 
 
 write.csv(visits, file = here::here("output", "processed", "visits_stats.csv"), row.names = FALSE)
 
