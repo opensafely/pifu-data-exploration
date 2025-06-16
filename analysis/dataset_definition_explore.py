@@ -9,6 +9,14 @@ from ehrql.tables.tpp import patients, practice_registrations, clinical_events, 
 dataset = create_dataset()
 dataset.configure_dummy_data(population_size=10000)
 
+
+
+total_opa = opa.where(
+        opa.appointment_date.is_on_or_between("2024-01-01","2024-12-31")
+    ).appointment_date
+
+dataset.count_same_day = total_opa.count_episodes_for_patient(days(0))
+
 # all outpatient visits - to measure before / after start of personalised follow-up
 all_opa = opa.where(
         opa.appointment_date.is_on_or_between("2024-01-01","2024-12-31")
@@ -25,6 +33,7 @@ dataset.first_attendance = all_opa.first_attendance
 dataset.pfu = all_opa.outcome_of_attendance.is_in(["4","5"])
 
 dataset.region = practice_registrations.for_patient_on("2024-01-01").practice_nuts1_region_name
+
 
 ###################################
 

@@ -30,7 +30,9 @@ freq <- function(var, name) {
 
 #####
 
-opa <- read_csv(here::here("output", "dataset_explore.csv.gz"))
+opa <- read_csv(here::here("output", "dataset_explore.csv.gz")) %>%
+  mutate(same_day = ifelse(count_same_day >= 6, ">=6", count_same_day))
+
 pfu <- opa %>% subset(pfu == TRUE)
 
 #####
@@ -38,11 +40,13 @@ pfu <- opa %>% subset(pfu == TRUE)
 df <- opa
 
 table <- rbind(
+  freq(region, "region"),
   freq(outcome_of_attendance, "outcome of attendance"),
   freq(treatment_function_code, "treatment function code"),
   freq(attendance_status, "attendance status"),
   freq(consultation_medium_used, "consultation medium used"),
   freq(first_attendance, "first attendance"),
+  freq(same_day, "no. days with multiple visits"),
   freq(pfu, "pfu")
 ) %>%
   mutate(count = rounding(count), total = rounding(total)) %>%
@@ -56,11 +60,13 @@ write.csv(table, file = here::here("output", "processed", "table_explore.csv"), 
 df <- pfu
 
 table_pfu <- rbind(
+  freq(region, "region"),
   freq(outcome_of_attendance, "outcome of attendance"),
   freq(treatment_function_code, "treatment function code"),
   freq(attendance_status, "attendance status"),
   freq(consultation_medium_used, "consultation medium used"),
   freq(first_attendance, "first attendance"),
+  freq(same_day, "no. days with multiple visits"),
   freq(pfu, "pfu")
 ) %>%
   mutate(count = rounding(count), total = rounding(total)) %>%
