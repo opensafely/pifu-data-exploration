@@ -12,7 +12,6 @@ dataset.configure_dummy_data(population_size=10000)
 # all outpatient visits - to measure before / after start of personalised follow-up
 all_opa = opa.where(
         opa.appointment_date.is_on_or_after("2018-06-01")
-        & opa.attendance_status.is_in(["5","6"])
     ).sort_by(
         opa.appointment_date
 )
@@ -47,22 +46,16 @@ dataset.first_opa_year = dataset.first_opa_date.year
 dataset.any_opa = dataset.first_opa_date.is_not_null()
 
 dataset.treatment_function_code = first_opa.treatment_function_code # specialty
+dataset.pfu_treatment_function_code = first_pfu.treatment_function_code
 
 ###################################
 
-# outpatient visits 3 years before start of personalised followup
-dataset.before_3yr = all_opa.where(
-        all_opa.appointment_date.is_on_or_between(dataset.first_pfu_date - years(3), dataset.first_pfu_date)
-        & dataset.any_pfu
-    ).count_for_patient()
-
-# outpatient visits 2 years before start of personalised followup
+# outpatient visits before start of personalised followup
 dataset.before_2yr = all_opa.where(
         all_opa.appointment_date.is_on_or_between(dataset.first_pfu_date - years(2), dataset.first_pfu_date)
         & dataset.any_pfu
     ).count_for_patient()
 
-# outpatient visits 1 year before start of personalised followup
 dataset.before_1yr = all_opa.where(
         all_opa.appointment_date.is_on_or_between(dataset.first_pfu_date - years(1), dataset.first_pfu_date)
         & dataset.any_pfu
@@ -74,86 +67,25 @@ dataset.after_1yr = all_opa.where(
         & dataset.any_pfu
     ).count_for_patient()
 
-# outpatient visits 2 year after start of personalised followup
-dataset.after_2yr = all_opa.where(
-        all_opa.appointment_date.is_on_or_between(dataset.first_pfu_date, dataset.first_pfu_date + years(2))
-        & dataset.any_pfu
-    ).count_for_patient()
 
 ###
 
-dataset.before_3yr_date_1 = all_opa.where(
+dataset.before_last_date = all_opa.where(
         all_opa.appointment_date.is_on_or_between(dataset.first_pfu_date - years(3), dataset.first_pfu_date - days(1))
         & dataset.any_pfu
     ).sort_by(
         all_opa.appointment_date
-    ).first_for_patient().appointment_date
+    ).last_for_patient().appointment_date
 
-dataset.before_3yr_date_2 = all_opa.where(
-        all_opa.appointment_date.is_on_or_between(dataset.before_3yr_date_1 + days(1), dataset.first_pfu_date)
+dataset.after_next_date = all_opa.where(
+        all_opa.appointment_date.is_after(dataset.first_pfu_date)
         & dataset.any_pfu
     ).sort_by(
         all_opa.appointment_date
     ).first_for_patient().appointment_date
 
-dataset.before_3yr_date_3 = all_opa.where(
-        all_opa.appointment_date.is_on_or_between(dataset.before_3yr_date_2 + days(1), dataset.first_pfu_date)
-        & dataset.any_pfu
-    ).sort_by(
-        all_opa.appointment_date
-    ).first_for_patient().appointment_date
-
-dataset.before_3yr_date_4 = all_opa.where(
-        all_opa.appointment_date.is_on_or_between(dataset.before_3yr_date_3 + days(1), dataset.first_pfu_date)
-        & dataset.any_pfu
-    ).sort_by(
-        all_opa.appointment_date
-    ).first_for_patient().appointment_date
-
-dataset.before_3yr_date_5 = all_opa.where(
-        all_opa.appointment_date.is_on_or_between(dataset.before_3yr_date_4 + days(1), dataset.first_pfu_date)
-        & dataset.any_pfu
-    ).sort_by(
-        all_opa.appointment_date
-    ).first_for_patient().appointment_date
-
-##
-
-dataset.after_date_1 = all_opa.where(
-        all_opa.appointment_date.is_on_or_after(dataset.first_pfu_date)
-        & dataset.any_pfu
-    ).sort_by(
-        all_opa.appointment_date
-    ).first_for_patient().appointment_date
-
-dataset.after_date_2 = all_opa.where(
-        all_opa.appointment_date.is_after(dataset.after_date_1)
-        & dataset.any_pfu
-    ).sort_by(
-        all_opa.appointment_date
-    ).first_for_patient().appointment_date
-
-dataset.after_date_3 = all_opa.where(
-        all_opa.appointment_date.is_after(dataset.after_date_2)
-        & dataset.any_pfu
-    ).sort_by(
-        all_opa.appointment_date
-    ).first_for_patient().appointment_date
-
-dataset.after_date_4 = all_opa.where(
-        all_opa.appointment_date.is_after(dataset.after_date_3)
-        & dataset.any_pfu
-    ).sort_by(
-        all_opa.appointment_date
-    ).first_for_patient().appointment_date
-
-dataset.after_date_5 = all_opa.where(
-        all_opa.appointment_date.is_after(dataset.after_date_4)
-        & dataset.any_pfu
-    ).sort_by(
-        all_opa.appointment_date
-    ).first_for_patient().appointment_date
-
+dataset.days_from_last_visit = (dataset.first_pfu_date - dataset.before_last_date).days
+dataset.days_to_next_visit = (dataset.after_next_date - dataset.first_pfu_date).days
 
 
 ###################################

@@ -36,7 +36,6 @@ all_pfu = opa.where(
         & opa.outcome_of_attendance.is_in(["4","5"])
     )
 
-
 # Any outpatient visit - total and personalised 
 any_opa = all_opa.exists_for_patient()
 any_pfu = all_pfu.exists_for_patient()
