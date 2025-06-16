@@ -1,6 +1,20 @@
 version: '4.0'
 
 actions:
+  generate_dataset_explore:
+    run: ehrql:v1 generate-dataset analysis/dataset_definition_explore.py --output output/dataset_explore.csv.gz
+    outputs:
+      highly_sensitive:
+        dataset: output/dataset_explore.csv.gz
+
+  table_explore:
+    run: r:latest analysis/process/data_exploration.R
+    needs: [generate_dataset_explore]
+    outputs:
+      moderately_sensitive:
+        table1: output/processed/table_explore.csv
+        table2: output/processed/table_pfu_explore.csv
+
   generate_dataset:
     run: ehrql:v1 generate-dataset analysis/dataset_definition.py --output output/dataset.csv.gz
     outputs:
@@ -21,6 +35,7 @@ actions:
         table1: output/processed/table.csv
         table2: output/processed/table_pfu.csv
         table3: output/processed/table_rheum.csv
+        table4: output/processed/visits_stats.csv
 
   time_series:
     run: r:latest analysis/process/measures_process.R
@@ -29,13 +44,13 @@ actions:
       moderately_sensitive:
         timeseries: output/processed/time_series.csv
 
-  time_between_visits:
-    run: r:latest analysis/process/visits_before_after.R
-    needs: [generate_dataset]
-    outputs:
-      moderately_sensitive:
-        summ_stats1: output/processed/summary_stats.csv
-        summ_stats2: output/processed/time_summary_stats.csv
-        figure: output/processed/figures/time_to_next_visit.png
-      highly_sensitive:
-        times: output/processed/time_to_next_visit.csv
+  # time_between_visits:
+  #   run: r:latest analysis/process/visits_before_after.R
+  #   needs: [generate_dataset]
+  #   outputs:
+  #     moderately_sensitive:
+  #       summ_stats1: output/processed/summary_stats.csv
+  #       summ_stats2: output/processed/time_summary_stats.csv
+  #       figure: output/processed/figures/time_to_next_visit.png
+  #       highly_sensitive:
+  #       times: output/processed/time_to_next_visit.csv
