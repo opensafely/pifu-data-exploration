@@ -75,3 +75,22 @@ table_pfu <- rbind(
 # Save
 write.csv(table_pfu, file = here::here("output", "processed", "table_pfu_explore.csv"), row.names = FALSE)
 
+#####
+
+quantile <- scales::percent(c(0,.1,.25,.5,.75,.9,.95,.99,100))
+  
+counts <- opa %>%
+  summarise_at(vars(c("count_all","count_all_attended")),
+               list(min = ~quantile(., 0, na.rm = TRUE),
+                    p10 = ~quantile(., 0, na.rm = TRUE),
+                    p25 = ~quantile(., .25, na.rm = TRUE),
+                    p50 = ~quantile(., .5, na.rm=TRUE),
+                    p75 = ~quantile(., .75, na.rm=TRUE),
+                    p90 = ~quantile(., .90, na.rm = TRUE),
+                    p95 = ~quantile(., .95, na.rm = TRUE),
+                    p99 = ~quantile(., .99, na.rm = TRUE),
+                    max = ~quantile(., 1, na.rm = TRUE))) %>%
+  reshape2::melt() 
+
+write.csv(counts, file = here::here("output", "processed", "counts_explore.csv"), row.names = FALSE)
+

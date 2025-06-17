@@ -14,6 +14,7 @@ actions:
       moderately_sensitive:
         table1: output/processed/table_explore.csv
         table2: output/processed/table_pfu_explore.csv
+        table3: output/processed/counts_explore.csv
 
   generate_dataset:
     run: ehrql:v1 generate-dataset analysis/dataset_definition.py --output output/dataset.csv.gz

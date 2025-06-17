@@ -10,14 +10,20 @@ dataset = create_dataset()
 dataset.configure_dummy_data(population_size=10000)
 
 
+total_opa = opa.where(opa.appointment_date.is_on_or_between("2024-01-01","2024-12-31"))
+total_opa_date = total_opa.appointment_date
 
-total_opa = opa.where(
-        opa.appointment_date.is_on_or_between("2024-01-01","2024-12-31")
-    ).appointment_date
+attended_opa = opa.where(
+    opa.appointment_date.is_on_or_between("2024-01-01","2024-12-31")
+    & opa.attendance_status.is_in(["1","2"])
+    )
+attended_opa_date = attended_opa.appointment_date
 
-dataset.count_same_day = total_opa.count_episodes_for_patient(days(0))
+dataset.count_same_day = total_opa_date.count_episodes_for_patient(days(0))
+dataset.count_same_day_attended = attended_opa_date.count_episodes_for_patient(days(0))
+dataset.count_all = total_opa.count_for_patient()
+dataset.count_all_attended = attended_opa.count_for_patient()
 
-# all outpatient visits - to measure before / after start of personalised follow-up
 all_opa = opa.where(
         opa.appointment_date.is_on_or_between("2024-01-01","2024-12-31")
     ).sort_by(
@@ -36,7 +42,6 @@ dataset.region = practice_registrations.for_patient_on("2024-01-01").practice_nu
 
 
 ###################################
-
 
 # define population - everyone with an outpatient visit
 dataset.define_population(
