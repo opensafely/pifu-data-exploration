@@ -19,13 +19,39 @@ attended_opa = opa.where(
     )
 attended_opa_date = attended_opa.appointment_date
 
+rheum_opa = opa.where(
+    opa.appointment_date.is_on_or_between("2024-01-01","2024-12-31")
+    & opa.treatment_function_code.is_in(["410"])
+)
+rheum_opa_date = rheum_opa.appointment_date
+
+rheum_attended_opa = opa.where(
+    opa.appointment_date.is_on_or_between("2024-01-01","2024-12-31")
+    & opa.attendance_status.is_in(["1","2"])
+    & opa.treatment_function_code.is_in(["410"])
+    )
+rheum_attended_opa_date = rheum_attended_opa.appointment_date
+
 dataset.count_same_day = total_opa_date.count_episodes_for_patient(days(0))
 dataset.count_same_day_attended = attended_opa_date.count_episodes_for_patient(days(0))
+dataset.count_same_day_rheum = rheum_opa_date.count_episodes_for_patient(days(0))
+dataset.count_same_day_rheum_attended = rheum_attended_opa_date.count_episodes_for_patient(days(0))
+
 dataset.count_all = total_opa.count_for_patient()
 dataset.count_all_attended = attended_opa.count_for_patient()
+dataset.count_all_rheum = rheum_opa.count_for_patient()
+dataset.count_all_rheum_attended = rheum_attended_opa.count_for_patient()
+
 
 all_opa = opa.where(
         opa.appointment_date.is_on_or_between("2024-01-01","2024-12-31")
+    ).sort_by(
+        opa.appointment_date
+    ).first_for_patient()
+
+all_rheum_opa = opa.where(
+        opa.appointment_date.is_on_or_between("2024-01-01","2024-12-31")
+        & opa.treatment_function_code.is_in(["410"])
     ).sort_by(
         opa.appointment_date
     ).first_for_patient()
@@ -38,7 +64,13 @@ dataset.consultation_medium_used = all_opa.consultation_medium_used
 dataset.first_attendance = all_opa.first_attendance
 dataset.pfu = all_opa.outcome_of_attendance.is_in(["4","5"])
 
-dataset.region = practice_registrations.for_patient_on("2024-01-01").practice_nuts1_region_name
+dataset.rheum_any_opa = all_opa.exists_for_patient()
+dataset.rheum_outcome_of_attendance = all_opa.outcome_of_attendance
+dataset.rheum_treatment_function_code = all_opa.treatment_function_code  # specialty
+dataset.rheum_attendance_status = all_opa.attendance_status
+dataset.rheum_consultation_medium_used = all_opa.consultation_medium_used
+dataset.rheum_first_attendance = all_opa.first_attendance
+dataset.rheum_pfu = all_opa.outcome_of_attendance.is_in(["4","5"])
 
 
 ###################################

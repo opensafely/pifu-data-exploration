@@ -31,7 +31,10 @@ freq <- function(var, name) {
 #####
 
 opa <- read_csv(here::here("output", "dataset_explore.csv.gz")) %>%
-  mutate(same_day = ifelse(count_same_day >= 6, ">=6", count_same_day))
+  mutate(same_day = ifelse(count_same_day >= 6, ">=6", count_same_day),
+         rheum_same_day = ifelse(count_same_day_rheum >= 6, ">=6", count_same_day_rheum),
+         same_day_attended = ifelse(count_same_day_attended >= 6, ">=6", count_same_day_attended),
+         rheum_same_day_attended = ifelse(count_same_day_rheum_attended >= 6, ">=6", count_same_day_rheum_attended))
 
 pfu <- opa %>% subset(pfu == TRUE)
 
@@ -40,7 +43,6 @@ pfu <- opa %>% subset(pfu == TRUE)
 df <- opa
 
 table <- rbind(
-  freq(region, "region"),
   freq(outcome_of_attendance, "outcome of attendance"),
   freq(treatment_function_code, "treatment function code"),
   freq(attendance_status, "attendance status"),
@@ -49,8 +51,23 @@ table <- rbind(
   freq(same_day, "no. days with multiple visits"),
   freq(pfu, "pfu")
 ) %>%
-  mutate(count = rounding(count), total = rounding(total)) %>%
+  mutate(count = rounding(count), total = rounding(total), what = "All outpatient") %>%
   subset(!(variable == "treatment function code") | (variable == "treatment_function_code" & count >= 100))
+
+
+table_rheum <- rbind(
+  freq(rheum_outcome_of_attendance, "outcome of attendance"),
+  freq(rheum_treatment_function_code, "treatment function code"),
+  freq(rheum_attendance_status, "attendance status"),
+  freq(rheum_consultation_medium_used, "consultation medium used"),
+  freq(rheum_first_attendance, "first attendance"),
+  freq(rheum_same_day, "no. days with multiple visits"),
+  freq(pfu, "pfu")
+) %>%
+  mutate(count = rounding(count), total = rounding(total), what = "Rheumatology") %>%
+  subset(!(variable == "treatment function code") | (variable == "treatment_function_code" & count >= 100))
+
+both <- rbind(table, table_rheum)
 
 # Save
 write.csv(table, file = here::here("output", "processed", "table_explore.csv"), row.names = FALSE)
@@ -60,7 +77,6 @@ write.csv(table, file = here::here("output", "processed", "table_explore.csv"), 
 df <- pfu
 
 table_pfu <- rbind(
-  freq(region, "region"),
   freq(outcome_of_attendance, "outcome of attendance"),
   freq(treatment_function_code, "treatment function code"),
   freq(attendance_status, "attendance status"),
