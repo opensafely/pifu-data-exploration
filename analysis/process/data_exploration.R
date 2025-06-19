@@ -49,6 +49,7 @@ table <- rbind(
   freq(consultation_medium_used, "consultation medium used"),
   freq(first_attendance, "first attendance"),
   freq(same_day, "no. days with multiple visits"),
+  freq(same_day_attended, "no. days with multiple attended visits"),
   freq(pfu, "pfu")
 ) %>%
   mutate(count = rounding(count), total = rounding(total), what = "All outpatient") %>%
@@ -62,6 +63,7 @@ table_rheum <- rbind(
   freq(rheum_consultation_medium_used, "consultation medium used"),
   freq(rheum_first_attendance, "first attendance"),
   freq(rheum_same_day, "no. days with multiple visits"),
+  freq(rheum_same_day_attended, "no. days with multiple attended visits"),
   freq(pfu, "pfu")
 ) %>%
   mutate(count = rounding(count), total = rounding(total), what = "Rheumatology") %>%
