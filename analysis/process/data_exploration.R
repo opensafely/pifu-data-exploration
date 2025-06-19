@@ -70,7 +70,7 @@ table_rheum <- rbind(
 both <- rbind(table, table_rheum)
 
 # Save
-write.csv(table, file = here::here("output", "processed", "table_explore.csv"), row.names = FALSE)
+write.csv(both, file = here::here("output", "processed", "table_explore.csv"), row.names = FALSE)
 
 ####
 
