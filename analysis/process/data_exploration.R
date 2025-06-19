@@ -77,7 +77,6 @@ write.csv(table, file = here::here("output", "processed", "table_explore.csv"), 
 df <- pfu
 
 table_pfu <- rbind(
-  freq(region, "region"),
   freq(outcome_of_attendance, "outcome of attendance"),
   freq(treatment_function_code, "treatment function code"),
   freq(attendance_status, "attendance status"),
