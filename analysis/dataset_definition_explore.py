@@ -39,8 +39,8 @@ dataset.count_same_day_rheum_attended = rheum_attended_opa_date.count_episodes_f
 
 dataset.count_all = total_opa.count_for_patient()
 dataset.count_all_attended = attended_opa.count_for_patient()
-dataset.count_all_rheum = rheum_opa.count_for_patient()
-dataset.count_all_rheum_attended = rheum_attended_opa.count_for_patient()
+dataset.count_rheum = rheum_opa.count_for_patient()
+dataset.count_rheum_attended = rheum_attended_opa.count_for_patient()
 
 
 all_opa = opa.where(
