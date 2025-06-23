@@ -34,7 +34,11 @@ opa <- read_csv(here::here("output", "dataset_explore.csv.gz")) %>%
   mutate(same_day = ifelse(count_same_day >= 6, ">=6", count_same_day),
          rheum_same_day = ifelse(count_same_day_rheum >= 6, ">=6", count_same_day_rheum),
          same_day_attended = ifelse(count_same_day_attended >= 6, ">=6", count_same_day_attended),
-         rheum_same_day_attended = ifelse(count_same_day_rheum_attended >= 6, ">=6", count_same_day_rheum_attended))
+         rheum_same_day_attended = ifelse(count_same_day_rheum_attended >= 6, ">=6", count_same_day_rheum_attended),
+         count_all_gp = ifelse(count_all >= 12, ">=12", count_all),
+         count_all_attended_gp = ifelse(count_all_attended >= 12, ">=12", count_all_attended),
+         count_rheum_gp = ifelse(count_rheum >= 12, ">=12", count_rheum),
+         count_rheum_attended_gp = ifelse(count_rheum_attended >=12, ">=12", count_rheum_attended))
 
 pfu <- opa %>% subset(pfu == TRUE)
 
@@ -50,10 +54,14 @@ table <- rbind(
   freq(first_attendance, "first attendance"),
   freq(same_day, "no. days with multiple visits"),
   freq(same_day_attended, "no. days with multiple attended visits"),
+  freq(count_all_gp, "total outpatient visits"),
+  freq(count_all_attended_gp, "total attended outpatient visits"),
+  freq(count_rheum_gp, "total rheumatology visits"),
+  freq(count_rheum_attended_gp, "total attended rheumatology visits"),
   freq(pfu, "pfu")
 ) %>%
-  mutate(count = rounding(count), total = rounding(total), what = "All outpatient") %>%
-  subset(!(variable == "treatment function code") | (variable == "treatment_function_code" & count >= 100))
+  mutate(count = rounding(count), total = rounding(total), what = "All outpatient") 
+  
 
 
 table_rheum <- rbind(
@@ -64,12 +72,15 @@ table_rheum <- rbind(
   freq(rheum_first_attendance, "first attendance"),
   freq(rheum_same_day, "no. days with multiple visits"),
   freq(rheum_same_day_attended, "no. days with multiple attended visits"),
+  freq(count_all_gp, "total outpatient visits"),
+  freq(count_all_attended_gp, "total attended outpatient visits"),
+  freq(count_rheum_gp, "total rheumatology visits"),
+  freq(count_rheum_attended_gp, "total attended rheumatology visits"),
   freq(pfu, "pfu")
 ) %>%
-  mutate(count = rounding(count), total = rounding(total), what = "Rheumatology") %>%
-  subset(!(variable == "treatment function code") | (variable == "treatment_function_code" & count >= 100))
+  mutate(count = rounding(count), total = rounding(total), what = "Rheumatology") 
 
-both <- rbind(table, table_rheum)
+both <- rbind(table, table_rheum) 
 
 # Save
 write.csv(both, file = here::here("output", "processed", "table_explore.csv"), row.names = FALSE)
@@ -88,7 +99,7 @@ table_pfu <- rbind(
   freq(pfu, "pfu")
 ) %>%
   mutate(count = rounding(count), total = rounding(total)) %>%
-  subset(!(variable == "treatment function code") | (variable == "treatment_function_code" & count >= 100))
+  subset(!(variable == "treatment function code") | (variable == "treatment_function_code" & count >= 100)) 
 
 # Save
 write.csv(table_pfu, file = here::here("output", "processed", "table_pfu_explore.csv"), row.names = FALSE)
@@ -98,7 +109,7 @@ write.csv(table_pfu, file = here::here("output", "processed", "table_pfu_explore
 quantile <- scales::percent(c(0,.1,.25,.5,.75,.9,.95,.99,100))
   
 counts <- opa %>%
-  summarise_at(vars(c("count_all","count_all_attended")),
+  summarise_at(vars(c("count_all","count_all_attended","count_rheum","count_rheum_attended")),
                list(min = ~quantile(., 0, na.rm = TRUE),
                     p10 = ~quantile(., 0, na.rm = TRUE),
                     p25 = ~quantile(., .25, na.rm = TRUE),
@@ -106,8 +117,7 @@ counts <- opa %>%
                     p75 = ~quantile(., .75, na.rm=TRUE),
                     p90 = ~quantile(., .90, na.rm = TRUE),
                     p95 = ~quantile(., .95, na.rm = TRUE),
-                    p99 = ~quantile(., .99, na.rm = TRUE),
-                    max = ~quantile(., 1, na.rm = TRUE))) %>%
+                    p99 = ~quantile(., .99, na.rm = TRUE))) %>%
   reshape2::melt() 
 
 write.csv(counts, file = here::here("output", "processed", "counts_explore.csv"), row.names = FALSE)
