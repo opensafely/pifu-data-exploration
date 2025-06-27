@@ -42,7 +42,6 @@ dataset.count_all_attended = attended_opa.count_for_patient()
 dataset.count_rheum = rheum_opa.count_for_patient()
 dataset.count_rheum_attended = rheum_attended_opa.count_for_patient()
 
-
 all_opa = opa.where(
         opa.appointment_date.is_on_or_between("2024-01-01","2024-12-31")
     ).sort_by(
@@ -71,6 +70,13 @@ dataset.rheum_attendance_status = all_opa.attendance_status
 dataset.rheum_consultation_medium_used = all_opa.consultation_medium_used
 dataset.rheum_first_attendance = all_opa.first_attendance
 dataset.rheum_pfu = all_opa.outcome_of_attendance.is_in(["4","5"])
+
+
+dataset.rrr_date = all_opa.referral_request_received_date
+dataset.rrr_year= dataset.rrr_date.year
+
+dataset.rrr_rheum_date = all_rheum_opa.referral_request_received_date
+dataset.rrr_rheum_year = dataset.rrr_rheum_date.year
 
 
 ###################################

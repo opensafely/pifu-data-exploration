@@ -111,10 +111,10 @@ quantile <- scales::percent(c(0,.1,.25,.5,.75,.9,.95,.99,100))
 counts <- opa %>%
   summarise_at(vars(c("count_all","count_all_attended","count_rheum","count_rheum_attended")),
                list(min = ~quantile(., 0, na.rm = TRUE),
-                    p10 = ~quantile(., 0, na.rm = TRUE),
+                    p10 = ~quantile(., .10, na.rm = TRUE),
                     p25 = ~quantile(., .25, na.rm = TRUE),
-                    p50 = ~quantile(., .5, na.rm=TRUE),
-                    p75 = ~quantile(., .75, na.rm=TRUE),
+                    p50 = ~quantile(., .50, na.rm = TRUE),
+                    p75 = ~quantile(., .75, na.rm = TRUE),
                     p90 = ~quantile(., .90, na.rm = TRUE),
                     p95 = ~quantile(., .95, na.rm = TRUE),
                     p99 = ~quantile(., .99, na.rm = TRUE))) %>%
