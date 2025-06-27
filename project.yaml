@@ -22,11 +22,11 @@ actions:
       highly_sensitive:
         dataset: output/dataset.csv.gz
   
-  generate_dataset_rheum:
-    run: ehrql:v1 generate-dataset analysis/dataset_definition_rheum.py --output output/dataset_rheum.csv.gz
-    outputs:
-      highly_sensitive:
-        dataset: output/dataset_rheum.csv.gz
+#  generate_dataset_rheum:
+#    run: ehrql:v1 generate-dataset analysis/dataset_definition_rheum.py --output output/dataset_rheum.csv.gz
+##    outputs:
+ #     highly_sensitive:
+ #       dataset: output/dataset_rheum.csv.gz
 
   measures:
     run: ehrql:v1 generate-measures analysis/measures.py --output output/measures/measures.csv
