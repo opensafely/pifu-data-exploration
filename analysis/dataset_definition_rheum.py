@@ -1,5 +1,5 @@
 #################################################################
-# This code extracts all people who had an outpatient visit
+# This code extracts all people who had a rheumatology outpatient visit
 #################################################################
 
 
@@ -13,6 +13,7 @@ dataset.configure_dummy_data(population_size=10000)
 # all outpatient visits - to measure before / after start of personalised follow-up
 all_opa = opa.where(
         opa.appointment_date.is_on_or_after("2018-06-01")
+        & opa.treatment_function_code.is_in(["410"])
     ).sort_by(
         opa.appointment_date
 )
