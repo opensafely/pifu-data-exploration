@@ -75,8 +75,8 @@ dataset.rheum_pfu = all_opa.outcome_of_attendance.is_in(["4","5"])
 dataset.rrr_date = all_opa.referral_request_received_date
 dataset.rrr_year= dataset.rrr_date.year
 
-dataset.rrr_rheum_date = all_rheum_opa.referral_request_received_date
-dataset.rrr_rheum_year = dataset.rrr_rheum_date.year
+dataset.rheum_rrr_date = all_rheum_opa.referral_request_received_date
+dataset.rheum_rrr_year = dataset.rheum_rrr_date.year
 
 
 ###################################
