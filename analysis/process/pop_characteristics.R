@@ -77,6 +77,7 @@ table_rheum <- rbind(
   freq(age_group, "age"),
   freq(sex, "sex"),
   freq(region, "region"),
+  freq(treatment_function_code, "treatment function code"),
   freq(any_pfu, "personalised follow-up")
 ) %>%
   mutate(count = rounding(count), total = rounding(total),
@@ -116,7 +117,7 @@ table_pfu_moved <- rbind(
   freq(first_pfu_year, "first PFU year"),
   freq(treatment_function_code, "treatment function code"),
   freq(pfu_cat, "personalised followup category"),
-  freq(count_pfu_gp, "number of pfu records")
+  freq(count_pfu_gp, "number of pfu records"),
 ) %>%
   mutate(pfu_moved_count = count, pfu_moved_total = total) %>%
   select(!c("count", "total"))
@@ -130,7 +131,7 @@ table_pfu_discharged <- rbind(
   freq(first_pfu_year, "first PFU year"),
   freq(treatment_function_code, "treatment function code"),
   freq(pfu_cat, "personalised followup category"),
-  freq(count_pfu_gp, "number of pfu records")
+  freq(count_pfu_gp, "number of pfu records"),
 ) %>%
   mutate(pfu_discharged_count = count, pfu_discharged_total = total) %>%
   select(!c("count", "total"))
@@ -224,7 +225,7 @@ visits <- pfu %>%
                     p25 = ~quantile(., .25, na.rm = TRUE),
                     p50 = ~quantile(., .5, na.rm=TRUE),
                     p75 = ~quantile(., .75, na.rm=TRUE),
-                    max = ~quantile(., 1, na.rm = TRUE))) %>%
+                    p90 = ~quantile(., .9, na.rm = TRUE))) %>%
   reshape2::melt() 
 
 write.csv(visits, file = here::here("output", "processed", "visits_stats.csv"), row.names = FALSE)

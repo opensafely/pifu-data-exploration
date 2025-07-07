@@ -10,8 +10,8 @@ dataset = create_dataset()
 dataset.configure_dummy_data(population_size=10000)
 
 
-# all outpatient visits - to measure before / after start of personalised follow-up
-all_opa = opa.where(
+# rheumatology outpatient visits - to measure before / after start of personalised follow-up
+rheum_opa = opa.where(
         opa.appointment_date.is_on_or_after("2018-06-01")
         & opa.treatment_function_code.is_in(["410"])
     ).sort_by(
@@ -19,18 +19,18 @@ all_opa = opa.where(
 )
 
 # everyone with an outpatient visit
-first_opa = all_opa.where(
-        all_opa.appointment_date.is_on_or_after("2022-06-01")
+first_opa = rheum_opa.where(
+        rheum_opa.appointment_date.is_on_or_after("2022-06-01")
     ).sort_by(
-        all_opa.appointment_date
+        rheum_opa.appointment_date
     ).first_for_patient()
 
 # first personalised pathway record
-first_pfu = all_opa.where(
-        all_opa.outcome_of_attendance.is_in(["4","5"]) 
-        & all_opa.appointment_date.is_on_or_after("2022-06-01")
+first_pfu = rheum_opa.where(
+        rheum_opa.outcome_of_attendance.is_in(["4","5"]) 
+        & rheum_opa.appointment_date.is_on_or_after("2022-06-01")
     ).sort_by(
-        all_opa.appointment_date
+        rheum_opa.appointment_date
     ).first_for_patient()
 
 
@@ -39,8 +39,8 @@ dataset.pfu_cat = first_pfu.outcome_of_attendance
 dataset.first_pfu_date = first_pfu.appointment_date
 dataset.first_pfu_year = dataset.first_pfu_date.year
 dataset.any_pfu = dataset.first_pfu_date.is_not_null() 
-dataset.count_pfu = all_opa.where(
-        all_opa.outcome_of_attendance.is_in(["4","5"]) 
+dataset.count_pfu = rheum_opa.where(
+        rheum_opa.outcome_of_attendance.is_in(["4","5"]) 
     ).count_for_patient() # number of pfu records
 
 dataset.first_opa_date = first_opa.appointment_date
@@ -53,42 +53,42 @@ dataset.pfu_treatment_function_code = first_pfu.treatment_function_code
 ###################################
 
 # outpatient visits before start of personalised followup
-dataset.before_3yr = all_opa.where(
-        all_opa.appointment_date.is_on_or_between(dataset.first_pfu_date - years(3), dataset.first_pfu_date - days(1))
+dataset.before_3yr = rheum_opa.where(
+        rheum_opa.appointment_date.is_on_or_between(dataset.first_pfu_date - years(3), dataset.first_pfu_date - days(1))
         & dataset.any_pfu
     ).count_for_patient()
 
-dataset.before_2yr = all_opa.where(
-        all_opa.appointment_date.is_on_or_between(dataset.first_pfu_date - years(2), dataset.first_pfu_date - days(1))
+dataset.before_2yr = rheum_opa.where(
+        rheum_opa.appointment_date.is_on_or_between(dataset.first_pfu_date - years(2), dataset.first_pfu_date - days(1))
         & dataset.any_pfu
     ).count_for_patient()
 
-dataset.before_1yr = all_opa.where(
-        all_opa.appointment_date.is_on_or_between(dataset.first_pfu_date - years(1), dataset.first_pfu_date - days(1))
+dataset.before_1yr = rheum_opa.where(
+        rheum_opa.appointment_date.is_on_or_between(dataset.first_pfu_date - years(1), dataset.first_pfu_date - days(1))
         & dataset.any_pfu
     ).count_for_patient()
 
 # outpatient visits 1 year after start of personalised followup
-dataset.after_1yr = all_opa.where(
-        all_opa.appointment_date.is_on_or_between(dataset.first_pfu_date + days(1), dataset.first_pfu_date + years(1))
+dataset.after_1yr = rheum_opa.where(
+        rheum_opa.appointment_date.is_on_or_between(dataset.first_pfu_date + days(1), dataset.first_pfu_date + years(1))
         & dataset.any_pfu
     ).count_for_patient()
 
 
 ###
 
-dataset.before_last_date = all_opa.where(
-        all_opa.appointment_date.is_on_or_between(dataset.first_pfu_date - years(3), dataset.first_pfu_date - days(1))
+dataset.before_last_date = rheum_opa.where(
+        rheum_opa.appointment_date.is_on_or_between(dataset.first_pfu_date - years(3), dataset.first_pfu_date - days(1))
         & dataset.any_pfu
     ).sort_by(
-        all_opa.appointment_date
+        rheum_opa.appointment_date
     ).last_for_patient().appointment_date
 
-dataset.after_next_date = all_opa.where(
-        all_opa.appointment_date.is_after(dataset.first_pfu_date)
+dataset.after_next_date = rheum_opa.where(
+        rheum_opa.appointment_date.is_after(dataset.first_pfu_date)
         & dataset.any_pfu
     ).sort_by(
-        all_opa.appointment_date
+        rheum_opa.appointment_date
     ).first_for_patient().appointment_date
 
 dataset.days_from_last_visit = (dataset.first_pfu_date - dataset.before_last_date).days
