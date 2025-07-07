@@ -66,7 +66,7 @@ table <- rbind(
     freq(treatment_function_code, "treatment function code"),
     freq(any_pfu, "personalised follow-up")
   ) %>%
-    subset(!(variable == "treatment function code") | (variable == "treatment function code" & count >= 100)) %>%
+    subset(!(variable == "treatment function code") | (variable == "treatment function code" & count >= 500)) %>%
     mutate(count = rounding(count), total = rounding(total),
            category = ifelse(is.na(category), "missing", category),
            who = "All outpatients")
@@ -141,7 +141,9 @@ all_pfu <- merge(table_pfu, table_pfu_moved, all = T) %>%
   fill(ends_with("total")) %>%
   replace(is.na(.), 0) %>%
   mutate(across(c(starts_with("pfu")), rounding),
-         category = ifelse(category == 0, "missing", category))  
+         category = ifelse(category == 0, "missing", category)) %>%
+  subset(!(variable == "treatment function code") | (variable == "treatment function code" & pfu_all_count >= 500)) 
+  
 
 # Save
 write.csv(all_pfu, file = here::here("output", "processed", "table_pfu.csv"), row.names = FALSE)
