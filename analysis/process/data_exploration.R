@@ -59,8 +59,6 @@ table <- rbind(
   freq(same_day_attended, "no. days with multiple attended visits"),
   freq(count_all_gp, "total outpatient visits"),
   freq(count_all_attended_gp, "total attended outpatient visits"),
-  freq(count_rheum_gp, "total rheumatology visits"),
-  freq(count_rheum_attended_gp, "total attended rheumatology visits"),
   freq(pfu, "pfu")
 ) %>%
   mutate(count = rounding(count), total = rounding(total), what = "All outpatient") 
@@ -75,15 +73,15 @@ table_rheum <- rbind(
   freq(rheum_rrr_year_gp, "year of referral"),
   freq(rheum_same_day, "no. days with multiple visits"),
   freq(rheum_same_day_attended, "no. days with multiple attended visits"),
-  freq(count_all_gp, "total outpatient visits"),
-  freq(count_all_attended_gp, "total attended outpatient visits"),
   freq(count_rheum_gp, "total rheumatology visits"),
   freq(count_rheum_attended_gp, "total attended rheumatology visits"),
   freq(pfu, "pfu")
 ) %>%
   mutate(count = rounding(count), total = rounding(total), what = "Rheumatology") 
 
-both <- rbind(table, table_rheum) 
+both <- rbind(table, table_rheum) %>%
+  subset(!(variable == "treatment function code") | (variable == "treatment function code" & count >= 1000)) 
+  
 
 # Save
 write.csv(both, file = here::here("output", "processed", "table_explore.csv"), row.names = FALSE)
