@@ -114,7 +114,7 @@ dataset.age_group = case(
 dataset.region = practice_registrations.for_patient_on("2022-06-01").practice_nuts1_region_name
 
 
-# define population - everyone with an outpatient visit
+# define population - everyone with a rheumatology outpatient visit
 dataset.define_population(
     (dataset.age >= 18) 
     & (dataset.age < 110) 

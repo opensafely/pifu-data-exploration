@@ -42,40 +42,48 @@ dataset.count_all_attended = attended_opa.count_for_patient()
 dataset.count_rheum = rheum_opa.count_for_patient()
 dataset.count_rheum_attended = rheum_attended_opa.count_for_patient()
 
-all_opa = opa.where(
-        opa.appointment_date.is_on_or_between("2024-01-01","2024-12-31")
-    ).sort_by(
+first_opa = attended_opa.sort_by(
         opa.appointment_date
     ).first_for_patient()
 
-all_rheum_opa = opa.where(
-        opa.appointment_date.is_on_or_between("2024-01-01","2024-12-31")
-        & opa.treatment_function_code.is_in(["410"])
-    ).sort_by(
+first_rheum_opa = rheum_attended_opa.sort_by(
         opa.appointment_date
     ).first_for_patient()
 
-dataset.any_opa = all_opa.exists_for_patient()
-dataset.outcome_of_attendance = all_opa.outcome_of_attendance
-dataset.treatment_function_code = all_opa.treatment_function_code  # specialty
-dataset.attendance_status = all_opa.attendance_status
-dataset.consultation_medium_used = all_opa.consultation_medium_used
-dataset.first_attendance = all_opa.first_attendance
-dataset.pfu = all_opa.outcome_of_attendance.is_in(["4","5"])
+first_pfu = attended_opa.where(
+        attended_opa.outcome_of_attendance.is_in(["4","5"])   
+    ).sort_by(
+        attended_opa.appointment_date
+    ).first_for_patient()
 
-dataset.rheum_any_opa = all_opa.exists_for_patient()
-dataset.rheum_outcome_of_attendance = all_opa.outcome_of_attendance
-dataset.rheum_treatment_function_code = all_opa.treatment_function_code  # specialty
-dataset.rheum_attendance_status = all_opa.attendance_status
-dataset.rheum_consultation_medium_used = all_opa.consultation_medium_used
-dataset.rheum_first_attendance = all_opa.first_attendance
-dataset.rheum_pfu = all_opa.outcome_of_attendance.is_in(["4","5"])
+first_rheum_pfu = rheum_attended_opa.where(
+        rheum_attended_opa.outcome_of_attendance.is_in(["4","5"])   
+    ).sort_by(
+        rheum_attended_opa.appointment_date
+    ).first_for_patient()
 
 
-dataset.rrr_date = all_opa.referral_request_received_date
+dataset.any_opa = first_opa.exists_for_patient()
+dataset.outcome_of_attendance = first_opa.outcome_of_attendance
+dataset.treatment_function_code = first_opa.treatment_function_code  # specialty
+dataset.attendance_status = first_opa.attendance_status
+dataset.consultation_medium_used = first_opa.consultation_medium_used
+dataset.first_attendance = first_opa.first_attendance
+dataset.pfu = first_pfu.exists_for_patient()
+
+dataset.rheum_any_opa = first_rheum_opa.exists_for_patient()
+dataset.rheum_outcome_of_attendance = first_rheum_opa.outcome_of_attendance
+dataset.rheum_treatment_function_code = first_rheum_opa.treatment_function_code  # specialty
+dataset.rheum_attendance_status = first_rheum_opa.attendance_status
+dataset.rheum_consultation_medium_used = first_rheum_opa.consultation_medium_used
+dataset.rheum_first_attendance = first_rheum_opa.first_attendance
+dataset.rheum_pfu = first_rheum_pfu.exists_for_patient()
+
+
+dataset.rrr_date = first_opa.referral_request_received_date
 dataset.rrr_year= dataset.rrr_date.year
 
-dataset.rheum_rrr_date = all_rheum_opa.referral_request_received_date
+dataset.rheum_rrr_date = first_rheum_opa.referral_request_received_date
 dataset.rheum_rrr_year = dataset.rheum_rrr_date.year
 
 
@@ -88,5 +96,4 @@ dataset.define_population(
     & ((patients.sex == "male") | (patients.sex == "female"))
     & (patients.date_of_death.is_after("2024-01-01") | patients.date_of_death.is_null())
     & (practice_registrations.for_patient_on("2024-01-01").exists_for_patient())
-    & dataset.any_opa
 )

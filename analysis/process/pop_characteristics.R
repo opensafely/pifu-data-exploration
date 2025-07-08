@@ -66,7 +66,7 @@ table <- rbind(
     freq(treatment_function_code, "treatment function code"),
     freq(any_pfu, "personalised follow-up")
   ) %>%
-    subset(!(variable == "treatment function code") | (variable == "treatment function code" & count >= 500)) %>%
+    subset(!(variable == "treatment function code") | (variable == "treatment function code" & count >= 1000)) %>%
     mutate(count = rounding(count), total = rounding(total),
            category = ifelse(is.na(category), "missing", category),
            who = "All outpatients")
