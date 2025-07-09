@@ -32,7 +32,7 @@ freq <- function(var, name) {
 #####
 
 # Read in data
-everyone <- read_csv(here::here("output", "dataset.csv.gz")) %>%
+everyone <- read_csv(here::here("output", "dataset_everyone.csv.gz")) %>%
   mutate(count_pfu_gp = ifelse(count_pfu >= 6, "6+", as.character(count_pfu)),
          before_2yr_any = (before_2yr > 0),
          before_1yr_any = (before_1yr > 0),

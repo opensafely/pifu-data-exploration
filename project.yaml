@@ -17,10 +17,10 @@ actions:
         table3: output/processed/counts_explore.csv
 
   generate_dataset:
-    run: ehrql:v1 generate-dataset analysis/dataset_definition.py --output output/dataset.csv.gz
+    run: ehrql:v1 generate-dataset analysis/dataset_definition_everyone.py --output output/dataset_everyone.csv.gz
     outputs:
       highly_sensitive:
-        dataset: output/dataset.csv.gz
+        dataset: output/dataset_everyone.csv.gz
   
   generate_dataset_rheum:
     run: ehrql:v1 generate-dataset analysis/dataset_definition_rheum.py --output output/dataset_rheum.csv.gz
@@ -44,10 +44,10 @@ actions:
         table3: output/processed/table_rheum.csv
         table4: output/processed/visits_stats.csv
 
-  time_series:
-    run: r:latest analysis/process/measures_process.R
-    needs: [measures]
-    outputs:
-      moderately_sensitive:
-        timeseries: output/processed/time_series.csv
+#  time_series:
+#    run: r:latest analysis/process/measures_process.R
+#    needs: [measures]
+#    outputs:
+#      moderately_sensitive:
+#        timeseries: output/processed/time_series.csv
 
