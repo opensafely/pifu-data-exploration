@@ -96,4 +96,5 @@ dataset.define_population(
     & ((patients.sex == "male") | (patients.sex == "female"))
     & (patients.date_of_death.is_after("2024-01-01") | patients.date_of_death.is_null())
     & (practice_registrations.for_patient_on("2024-01-01").exists_for_patient())
+    & attended_opa.exists_for_patient()
 )

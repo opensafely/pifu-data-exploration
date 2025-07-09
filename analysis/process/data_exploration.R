@@ -46,7 +46,7 @@ pfu <- opa %>% subset(pfu == TRUE)
 
 #####
 
-df <- opa
+df <- opa 
 
 table <- rbind(
   freq(outcome_of_attendance, "outcome of attendance"),
@@ -63,6 +63,8 @@ table <- rbind(
 ) %>%
   mutate(count = rounding(count), total = rounding(total), what = "All outpatient") 
   
+
+df <- opa %>% subset(rheum_any_opa == TRUE)
 
 table_rheum <- rbind(
   freq(rheum_outcome_of_attendance, "outcome of attendance"),
