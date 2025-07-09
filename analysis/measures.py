@@ -30,12 +30,6 @@ all_opa = opa.where(
         & opa.attendance_status.is_in(["5","6"])
     )
 
-rheum_opa = opa.where(
-        opa.appointment_date.is_on_or_between(INTERVAL.start_date, INTERVAL.end_date)
-        & opa.attendance_status.is_in(["5","6"])
-        & opa.treatment_function_code.is_in(["410"])
-    )
-
 # All PIFU visits that were attended
 all_pfu = opa.where(
         opa.appointment_date.is_on_or_between(INTERVAL.start_date, INTERVAL.end_date)
@@ -43,59 +37,44 @@ all_pfu = opa.where(
         & opa.outcome_of_attendance.is_in(["4","5"])
     )
 
-rheum_pfu = opa.where(
-        opa.appointment_date.is_on_or_between(INTERVAL.start_date, INTERVAL.end_date)
-        & opa.attendance_status.is_in(["5","6"])
-        & opa.outcome_of_attendance.is_in(["4","5"])
-        & opa.treatment_function_code.is_in(["410"])
-    )
-
 # Any outpatient visit - total and personalised 
 any_opa = all_opa.exists_for_patient()
 any_pfu = all_pfu.exists_for_patient()
-any_pfu_moved = all_pfu.where(
-        all_pfu.outcome_of_attendance == "4"
-    ).exists_for_patient()   
-any_pfu_discharged = all_pfu.where(
-        all_pfu.outcome_of_attendance == "5"
-    ).exists_for_patient()   
 
-# Rheum outpatient visit - total and personalised
-any_rheum_opa = rheum_opa.exists_for_patient()
-any_rheum_pfu = rheum_pfu.exists_for_patient()
-any_rheum_pfu_moved = rheum_pfu.where(
-        rheum_pfu.outcome_of_attendance == "4"
-    ).exists_for_patient()   
-any_rheum_pfu_discharged = rheum_pfu.where(
-        rheum_pfu.outcome_of_attendance == "5"
-    ).exists_for_patient()   
 
 # Number of outpatient visits - total and personalised
 count_opa = all_opa.count_for_patient()
 count_pfu = all_pfu.count_for_patient()
-count_pfu_moved = all_pfu.where(
-        all_pfu.outcome_of_attendance == "4"
-    ).count_for_patient()
-count_pfu_discharged = all_pfu.where(
-        all_pfu.outcome_of_attendance == "5"
-    ).count_for_patient()
 
-# Number of rheum outpatient visits - total and personalised
-count_rheum_opa = rheum_opa.count_for_patient()
-count_rheum_pfu = rheum_pfu.count_for_patient()
-count_rheum_pfu_moved = rheum_pfu.where(
-        rheum_pfu.outcome_of_attendance == "4"
-    ).count_for_patient()
-count_rheum_pfu_discharged = rheum_pfu.where(
-        rheum_pfu.outcome_of_attendance == "5"
-    ).count_for_patient()
+
+# By treatment specialty (only include most common groups reported in public statistics)
+trt_func = ["100","101","110","120","130","140","150","160","170","300","301","320","330","340","400","410","430","502"]
+
+count_var = {}
+
+for code in trt_func:
+
+    count_var["any_opa_" + code] = all_opa.where(
+        all_opa.treatment_function_code.is_in([code])
+    ).exists_for_patient()
+
+    count_var["any_pfu_" + code] = all_pfu.where(
+        all_pfu.treatment_function_code.is_in([code])
+    ).exists_for_patient()
+
+    count_var["count_opa_" + code] = all_opa.where(
+        all_opa.treatment_function_code.is_in([code])
+    ).opa_ident.count_distinct_for_patient()
+    
+    count_var["count_pfu_" + code] = all_pfu.where(
+        all_pfu.treatment_function_code.is_in([code])
+    ).opa_ident.count_distinct_for_patient()
 
 
 
 ### Measures setup
 measures = Measures()
 measures.configure_disclosure_control(enabled=False)
-measures.define_defaults(intervals=months(39).starting_on("2022-01-01"))
 measures.configure_dummy_data(population_size=1000)
 
 denominator = (
@@ -106,8 +85,10 @@ denominator = (
         & (practice_registrations.for_patient_on(INTERVAL.start_date).exists_for_patient())
     )
 
-### 
-
+measures.define_defaults(
+    denominator = denominator,
+    intervals=months(48).starting_on("2022-01-01")
+    )
 
 ########################
 
@@ -147,83 +128,23 @@ measures.define_measure(
     denominator=denominator & any_opa,
     )
 
-# Number of people "moved" to personalised follow-up 
-measures.define_measure(
-    name="count_pfu_moved",
-    numerator=count_pfu_moved,
-    denominator=denominator & any_pfu,
-    )
-
-measures.define_measure(
-    name="patients_pfu_moved",
-    numerator=any_pfu_moved,
-    denominator=denominator & any_pfu,
-    )
-
-# Number of people "discharged" to personalised follow-up
-measures.define_measure(
-    name="count_pfu_discharged",
-    numerator=count_pfu_discharged,
-    denominator=denominator & any_pfu,
-    )
-
-measures.define_measure(
-    name="patients_pfu_discharged",
-    numerator=any_pfu_discharged,
-    denominator=denominator & any_pfu,
-    )
-
 ###########################################
 
-
-# Number of people with a rheum outpatient visit
-measures.define_measure(
-    name="count_rheum_opa",
-    numerator=count_rheum_opa,
-    denominator=denominator,
+for code in trt_func:
+    measures.define_measure(
+        name=f"any_opa_{code}",
+       numerator=count_var["any_opa_" + code]
     )
-
-measures.define_measure(
-    name="patients_rheum_opa",
-    numerator=any_rheum_opa,
-    denominator=denominator,
+    measures.define_measure(
+        name=f"any_pfu_{code}",
+        numerator=count_var["any_pfu_" + code]
     )
-
-# Number of people with a personalised follow-up visit
-measures.define_measure(
-    name="count_rheum_pfu",
-    numerator=count_rheum_pfu,
-    denominator=denominator & any_rheum_opa,
+    
+    measures.define_measure(
+        name=f"count_opa_{code}",
+       numerator=count_var["count_opa_" + code]
     )
-
-measures.define_measure(
-    name="patients_rheum_pfu",
-    numerator=any_rheum_pfu,
-    denominator=denominator & any_rheum_opa,
-    )
-
-# Number of people "moved" to personalised follow-up 
-measures.define_measure(
-    name="count_rheum_pfu_moved",
-    numerator=count_rheum_pfu_moved,
-    denominator=denominator & any_rheum_pfu,
-    )
-
-measures.define_measure(
-    name="patients_rheum_pfu_moved",
-    numerator=any_rheum_pfu_moved,
-    denominator=denominator & any_rheum_pfu,
-    )
-
-# Number of people "discharged" to personalised follow-up
-measures.define_measure(
-    name="count_rheum_pfu_discharged",
-    numerator=count_rheum_pfu_discharged,
-    denominator=denominator & any_rheum_pfu,
-    )
-
-measures.define_measure(
-    name="patients_rheum_pfu_discharged",
-    numerator=any_rheum_pfu_discharged,
-    denominator=denominator & any_rheum_pfu,
+    measures.define_measure(
+        name=f"count_pfu_{code}",
+        numerator=count_var["count_pfu_" + code]
     )

@@ -36,7 +36,7 @@ first_pfu = all_opa.where(
 
 from dataset_definition import opa_characteristics
 
-opa_characteristics(all_opa, first_opa, first_pfu)
+dataset = opa_characteristics(all_opa, first_opa, first_pfu)
 
 
 # define population - everyone with an outpatient visit
