@@ -15,9 +15,7 @@ rheum_opa = opa.where(
         opa.appointment_date.is_on_or_after("2018-06-01")
         & opa.treatment_function_code.is_in(["410"])
         & opa.attendance_status.is_in(["5","6"])
-    ).sort_by(
-        opa.appointment_date
-)
+    )
 
 # everyone with an outpatient visit
 first_opa = rheum_opa.where(
@@ -53,23 +51,19 @@ dataset.pfu_treatment_function_code = first_pfu.treatment_function_code
 # outpatient visits before start of personalised followup
 dataset.before_3yr = rheum_opa.where(
         rheum_opa.appointment_date.is_on_or_between(dataset.first_pfu_date - years(3), dataset.first_pfu_date - days(1))
-        & dataset.any_pfu
     ).count_for_patient()
 
 dataset.before_2yr = rheum_opa.where(
         rheum_opa.appointment_date.is_on_or_between(dataset.first_pfu_date - years(2), dataset.first_pfu_date - days(1))
-        & dataset.any_pfu
     ).count_for_patient()
 
 dataset.before_1yr = rheum_opa.where(
         rheum_opa.appointment_date.is_on_or_between(dataset.first_pfu_date - years(1), dataset.first_pfu_date - days(1))
-        & dataset.any_pfu
     ).count_for_patient()
 
 # outpatient visits 1 year after start of personalised followup
 dataset.after_1yr = rheum_opa.where(
         rheum_opa.appointment_date.is_on_or_between(dataset.first_pfu_date + days(1), dataset.first_pfu_date + years(1))
-        & dataset.any_pfu
     ).count_for_patient()
 
 
@@ -77,14 +71,12 @@ dataset.after_1yr = rheum_opa.where(
 
 dataset.before_last_date = rheum_opa.where(
         rheum_opa.appointment_date.is_on_or_between(dataset.first_pfu_date - years(3), dataset.first_pfu_date - days(1))
-        & dataset.any_pfu
     ).sort_by(
         rheum_opa.appointment_date
     ).last_for_patient().appointment_date
 
 dataset.after_next_date = rheum_opa.where(
         rheum_opa.appointment_date.is_after(dataset.first_pfu_date)
-        & dataset.any_pfu
     ).sort_by(
         rheum_opa.appointment_date
     ).first_for_patient().appointment_date
@@ -99,7 +91,7 @@ dataset.days_to_next_visit = (dataset.after_next_date - dataset.first_pfu_date).
 # demographics
 dataset.sex = patients.sex
 
-dataset.age = patients.age_on("2022-06-01")
+dataset.age = patients.age_on(first_opa.appointment_date)
 dataset.age_group = case(
         when(dataset.age < 30).then("18-29"),
         when(dataset.age < 40).then("30-39"),
@@ -112,7 +104,7 @@ dataset.age_group = case(
         otherwise="missing",
 )
 
-dataset.region = practice_registrations.for_patient_on("2022-06-01").practice_nuts1_region_name
+dataset.region = practice_registrations.for_patient_on(first_opa.appointment_date).practice_nuts1_region_name
 
 
 # define population - everyone with an outpatient visit
@@ -120,8 +112,8 @@ dataset.define_population(
     (dataset.age >= 18) 
     & (dataset.age < 110) 
     & ((patients.sex == "male") | (patients.sex == "female"))
-    & (patients.date_of_death.is_after("2022-06-01") | patients.date_of_death.is_null())
-    & (practice_registrations.for_patient_on("2022-06-01").exists_for_patient())
+    & (patients.date_of_death.is_after(first_opa.appointment_date) | patients.date_of_death.is_null())
+    & (practice_registrations.for_patient_on(first_opa.appointment_date).exists_for_patient())
     & dataset.any_opa.is_not_null()
 )
 

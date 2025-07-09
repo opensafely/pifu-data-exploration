@@ -15,7 +15,7 @@ total_opa_date = total_opa.appointment_date
 
 attended_opa = opa.where(
     opa.appointment_date.is_on_or_between("2024-01-01","2024-12-31")
-    & opa.attendance_status.is_in(["1","2"])
+    & opa.attendance_status.is_in(["5","6"])
     )
 attended_opa_date = attended_opa.appointment_date
 
@@ -27,7 +27,7 @@ rheum_opa_date = rheum_opa.appointment_date
 
 rheum_attended_opa = opa.where(
     opa.appointment_date.is_on_or_between("2024-01-01","2024-12-31")
-    & opa.attendance_status.is_in(["1","2"])
+    & opa.attendance_status.is_in(["5","6"])
     & opa.treatment_function_code.is_in(["410"])
     )
 rheum_attended_opa_date = rheum_attended_opa.appointment_date
