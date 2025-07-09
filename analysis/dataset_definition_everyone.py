@@ -1,22 +1,22 @@
-####################################################################
-# This code extracts all people who had a rheumatology outpatient visit
-####################################################################
+#################################################################
+# This code extracts all people who had an outpatient visit
+#################################################################
 
 
 from ehrql import create_dataset, case, when, years, days, weeks, show
 from ehrql.tables.tpp import patients, practice_registrations, clinical_events, opa
 
 dataset = create_dataset()
-dataset.configure_dummy_data(population_size=9000)
+dataset.configure_dummy_data(population_size=10000)
 
 
-
-# rheumatology outpatient visits - to measure before / after start of personalised follow-up
+# all outpatient visits - to measure before / after start of personalised follow-up
 all_opa = opa.where(
         opa.appointment_date.is_on_or_after("2018-06-01")
-        & opa.treatment_function_code.is_in(["410"])
         & opa.attendance_status.is_in(["5","6"])
-    )
+    ).sort_by(
+        opa.appointment_date
+)
 
 # everyone with an outpatient visit
 first_opa = all_opa.where(
