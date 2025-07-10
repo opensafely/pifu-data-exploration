@@ -21,6 +21,7 @@ def opa_characteristics(all_opa, first_pfu, first_opa):
             & all_opa.appointment_date.is_on_or_after("2022-06-01")
         ).count_for_patient() # number of pfu records
 
+    dataset.first_opa_date = first_opa.appointment_date
     dataset.any_opa = first_opa.exists_for_patient()
     dataset.treatment_function_code = first_opa.treatment_function_code # specialty
     dataset.pfu_treatment_function_code = first_pfu.treatment_function_code
@@ -70,7 +71,7 @@ def opa_characteristics(all_opa, first_pfu, first_opa):
     # demographics
     dataset.sex = patients.sex
 
-    dataset.age = patients.age_on(first_opa.appointment_date)
+    dataset.age = patients.age_on(dataset.first_opa_date)
     dataset.age_group = case(
             when(dataset.age < 30).then("18-29"),
             when(dataset.age < 40).then("30-39"),
@@ -83,7 +84,7 @@ def opa_characteristics(all_opa, first_pfu, first_opa):
             otherwise="missing",
     )
 
-    dataset.region = practice_registrations.for_patient_on(first_opa.appointment_date).practice_nuts1_region_name
+    dataset.region = practice_registrations.for_patient_on(dataset.first_opa_date).practice_nuts1_region_name
 
     return dataset
 

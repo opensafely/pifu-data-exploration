@@ -41,10 +41,10 @@ dataset = opa_characteristics(all_opa, first_opa, first_pfu)
 
 # define population - everyone with an outpatient visit
 dataset.define_population(
-    (patients.age_on("2022-06-01") >= 18) 
-    & (patients.age_on("2022-06-01") < 110) 
-    & ((patients.sex == "male") | (patients.sex == "female"))
+    (dataset.age >= 18) 
+    & (dataset.age < 110) 
+    & ((dataset.sex == "male") | (dataset.sex == "female"))
     & (patients.date_of_death.is_after(first_opa.appointment_date) | patients.date_of_death.is_null())
-    & (practice_registrations.for_patient_on(first_opa.appointment_date).exists_for_patient())
-    & first_opa.exists_for_patient()
+    & (practice_registrations.for_patient_on(dataset.first_opa_date).exists_for_patient())
+    & dataset.first_opa_date.is_not_null()
 )
