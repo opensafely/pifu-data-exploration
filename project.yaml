@@ -44,10 +44,11 @@ actions:
         table3: output/processed/table_rheum.csv
         table4: output/processed/visits_stats.csv
 
-#  time_series:
-#    run: r:latest analysis/process/measures_process.R
-#    needs: [measures]
-#    outputs:
-#      moderately_sensitive:
-#        timeseries: output/processed/time_series.csv
+  time_series:
+    run: r:latest analysis/process/measures_process.R
+    needs: [measures]
+    outputs:
+      moderately_sensitive:
+        timeseries1: output/processed/time_series_overall.csv
+        timeseries2: output/processed/time_series_specialty.csv
 
