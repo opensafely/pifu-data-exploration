@@ -43,8 +43,8 @@ any_pfu = all_pfu.exists_for_patient()
 
 
 # Number of outpatient visits - total and personalised
-count_opa = all_opa.count_for_patient()
-count_pfu = all_pfu.count_for_patient()
+count_opa = all_opa.opa_ident.count_distinct_for_patient()
+count_pfu = all_pfu.opa_ident.count_distinct_for_patient()
 
 
 # By treatment specialty (only include most common groups reported in public statistics)
@@ -86,7 +86,6 @@ denominator = (
     )
 
 measures.define_defaults(
-    denominator = denominator,
     intervals=months(48).starting_on("2022-01-01")
     )
 
@@ -133,18 +132,21 @@ measures.define_measure(
 for code in trt_func:
     measures.define_measure(
         name=f"any_opa_{code}",
-       numerator=count_var["any_opa_" + code]
+        numerator=count_var["any_opa_" + code],
+        denominator = denominator,
     )
     measures.define_measure(
         name=f"any_pfu_{code}",
-        numerator=count_var["any_pfu_" + code]
+        numerator=count_var["any_pfu_" + code],
+        denominator = denominator & any_opa,
     )
-    
     measures.define_measure(
         name=f"count_opa_{code}",
-       numerator=count_var["count_opa_" + code]
+        numerator=count_var["count_opa_" + code],
+        denominator = denominator,
     )
     measures.define_measure(
         name=f"count_pfu_{code}",
-        numerator=count_var["count_pfu_" + code]
+        numerator=count_var["count_pfu_" + code],
+        denominator = denominator & any_opa,
     )
