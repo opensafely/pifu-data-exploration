@@ -1,4 +1,4 @@
-# Recording of personalised follow-up pathways in OpenSAFELY
+# Recording of personalised follow-up pathways in OpenSAFELY ([Project 194](https://www.opensafely.org/approved-projects/#project-194))
 
 [View on OpenSAFELY](https://jobs.opensafely.org/repo/https%253A%252F%252Fgithub.com%252Fopensafely%252Fpifu-data-exploration)
 
