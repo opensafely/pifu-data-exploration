@@ -44,7 +44,7 @@ dataset.define_population(
     (dataset.age >= 18) 
     & (dataset.age < 110) 
     & ((dataset.sex == "male") | (dataset.sex == "female"))
-    & (patients.date_of_death.is_after(first_opa.appointment_date) | patients.date_of_death.is_null())
+    & (patients.date_of_death.is_after(dataset.first_opa_date) | patients.date_of_death.is_null())
     & (practice_registrations.for_patient_on(dataset.first_opa_date).exists_for_patient())
     & dataset.first_opa_date.is_not_null()
 )
