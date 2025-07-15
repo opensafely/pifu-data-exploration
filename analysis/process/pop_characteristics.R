@@ -205,7 +205,9 @@ rheum_pfu <- merge(table_pfu_rheum, table_pfu_moved_rheum, all = T) %>%
   fill(ends_with("total")) %>%
   replace(is.na(.), 0) %>%
   mutate(across(c(starts_with("pfu")), rounding),
-         category = ifelse(category == 0, "missing", category))  
+         category = ifelse(category == 0, "missing", category),
+         pfu_moved_count = ifelse(variable == "region" & pfu_moved_count == 0, NA, pfu_moved_count),
+         pfu_discharged_count = ifelse(variable == "region" & pfu_discharged_count == 0, NA, pfu_discharged_count))  
 
 # Save
 write.csv(rheum_pfu, file = here::here("output", "processed", "table_rheum.csv"), row.names = FALSE)
