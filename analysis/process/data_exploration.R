@@ -39,8 +39,8 @@ opa <- read_csv(here::here("output", "dataset_explore.csv.gz")) %>%
          count_all_attended_gp = ifelse(count_all_attended >= 12, ">=12", count_all_attended),
          count_rheum_gp = ifelse(count_rheum >= 12, ">=12", count_rheum),
          count_rheum_attended_gp = ifelse(count_rheum_attended >=12, ">=12", count_rheum_attended),
-         rrr_year_gp = ifelse(rrr_year < 2020, "<2020", rrr_year),
-         rheum_rrr_year_gp = ifelse(rheum_rrr_year < 2020, "<2020", rheum_rrr_year))
+         rrr_year_gp = ifelse(rrr_year < 2020, "<2020", ifelse(rrr_year > 2024, ">2024", rrr_year)),
+         rheum_rrr_year_gp = ifelse(rheum_rrr_year < 2020, "<2020", ifelse(rheum_rrr_year > 2024, ">2024", rheum_rrr_year)))
        
 pfu <- opa %>% subset(pfu == TRUE)
 
