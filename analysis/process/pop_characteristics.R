@@ -44,7 +44,7 @@ pfu_discharged <- everyone %>% subset(any_pfu == TRUE & pfu_cat == "5")
 
 
 rheum <- read_csv(here::here("output", "dataset_rheum.csv.gz")) %>%
-  mutate(count_pfu_gp = ifelse(count_pfu >= 6, "6+", as.character(count_pfu)),
+  mutate(count_pfu_gp = ifelse(count_pfu >= 4, "4+", as.character(count_pfu)),
          before_2yr_any = (before_2yr > 0),
          before_1yr_any = (before_1yr > 0),
          after_1yr_any = (after_1yr > 0))
@@ -195,7 +195,10 @@ table_pfu_discharged_rheum <- rbind(
   freq(first_pfu_year, "first PFU year"),
   freq(treatment_function_code, "treatment function code"),
   freq(pfu_cat, "personalised followup category"),
-  freq(count_pfu_gp, "number of pfu records")
+  freq(count_pfu_gp, "number of pfu records"),
+  freq(before_2yr_any, "any visit 2 yrs pre"),
+  freq(before_1yr_any, "any visit 1 yr pre"),
+  freq(after_1yr_any, "any visit 1 yr post")
 ) %>%
   mutate(pfu_discharged_count = count, pfu_discharged_total = total) %>%
   select(!c("count", "total"))

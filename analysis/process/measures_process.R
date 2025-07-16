@@ -16,6 +16,7 @@ rounding <- function(vars) {
 
 measures <- read_csv(here::here("output", "measures", "measures.csv")) %>%
   select(c("measure", "interval_start", "numerator", "denominator")) %>%
+  subset(interval_start < as.Date("2025-07-01")) %>%
   rename(month = interval_start) 
 
 measures_wide <- measures %>%
