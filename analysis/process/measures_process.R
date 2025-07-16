@@ -16,7 +16,7 @@ rounding <- function(vars) {
 
 measures <- read_csv(here::here("output", "measures", "measures.csv")) %>%
   select(c("measure", "interval_start", "numerator", "denominator")) %>%
-  subset(interval_start < as.Date("2025-07-01")) %>%
+  subset(interval_start < as.Date("2025-06-01")) %>%
   rename(month = interval_start) 
 
 measures_wide <- measures %>%
@@ -40,7 +40,7 @@ all <- measures_wide %>%
   mutate(across(c(starts_with(c("count","patients","total","any","opa"))), rounding)) 
 
 overall <- all %>%
-  select(c("month", "total_pop", "opa_pop", "count_opa", "count_pfu", "patients_opa", "patients_pfu"))
+  select(c("month", "total_pop", "count_opa", "count_pfu", "patients_opa", "patients_pfu"))
 
 by_specialty <- all %>%
   select(!c("count_opa", "count_pfu", "patients_opa", "patients_pfu"))
