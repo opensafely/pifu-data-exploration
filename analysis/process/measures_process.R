@@ -36,7 +36,7 @@ all <- measures_wide %>%
   merge(measure_total_denom, all = T) %>%
   merge(measure_opa_denom, all = T) %>%
   replace(is.na(.), 0) %>%
-  mutate(across(c(starts_with(c("count","patients","total"))), rounding)) 
+  mutate(across(c(starts_with(c("count","patients","total","any","opa"))), rounding)) 
 
 overall <- all %>%
   select(c("month", "total_pop", "opa_pop", "count_opa", "count_pfu", "patients_opa", "patients_pfu"))
