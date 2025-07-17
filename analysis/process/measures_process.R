@@ -40,10 +40,10 @@ all <- measures_wide %>%
   mutate(across(c(starts_with(c("count","patients","total","any","opa"))), rounding)) 
 
 overall <- all %>%
-  select(c("month", "total_pop", "count_opa", "count_pfu", "patients_opa", "patients_pfu"))
+  select(c("month", "total_pop", "total_opa", "count_opa", "count_pfu", "patients_opa", "patients_pfu"))
 
 by_specialty <- all %>%
-  select(!c("count_opa", "count_pfu", "patients_opa", "patients_pfu"))
+  select(!c("count_opa", "count_pfu", "patients_opa", "patients_pfu", "total_pop", "total_opa", "opa_pop"))
 
 
 # Save
