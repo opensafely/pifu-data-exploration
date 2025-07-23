@@ -101,7 +101,7 @@ table_pfu <- rbind(
   freq(sex, "sex"),
   freq(region, "region"),
   freq(first_pfu_year, "first PFU year"),
-  freq(treatment_function_code, "treatment function code"),
+  freq(pfu_treatment_function_code, "treatment function code"),
   freq(pfu_cat, "personalised followup category"),
   freq(count_pfu_gp, "number of pfu records")
 ) %>%
@@ -115,7 +115,7 @@ table_pfu_moved <- rbind(
   freq(sex, "sex"),
   freq(region, "region"),
   freq(first_pfu_year, "first PFU year"),
-  freq(treatment_function_code, "treatment function code"),
+  freq(pfu_treatment_function_code, "treatment function code"),
   freq(pfu_cat, "personalised followup category"),
   freq(count_pfu_gp, "number of pfu records"),
 ) %>%
@@ -129,7 +129,7 @@ table_pfu_discharged <- rbind(
   freq(sex, "sex"),
   freq(region, "region"),
   freq(first_pfu_year, "first PFU year"),
-  freq(treatment_function_code, "treatment function code"),
+  freq(pfu_treatment_function_code, "treatment function code"),
   freq(pfu_cat, "personalised followup category"),
   freq(count_pfu_gp, "number of pfu records"),
 ) %>%
@@ -159,7 +159,7 @@ table_pfu_rheum <- rbind(
   freq(sex, "sex"),
   freq(region, "region"),
   freq(first_pfu_year, "first PFU year"),
-  freq(treatment_function_code, "treatment function code"),
+  freq(pfu_treatment_function_code, "treatment function code"),
   freq(pfu_cat, "personalised followup category"),
   freq(count_pfu_gp, "number of pfu records"),
   freq(before_2yr_any, "any visit 2 yrs pre"),
@@ -176,7 +176,7 @@ table_pfu_moved_rheum <- rbind(
   freq(sex, "sex"),
   freq(region, "region"),
   freq(first_pfu_year, "first PFU year"),
-  freq(treatment_function_code, "treatment function code"),
+  freq(pfu_treatment_function_code, "treatment function code"),
   freq(pfu_cat, "personalised followup category"),
   freq(count_pfu_gp, "number of pfu records"),
   freq(before_2yr_any, "any visit 2 yrs pre"),
@@ -193,7 +193,7 @@ table_pfu_discharged_rheum <- rbind(
   freq(sex, "sex"),
   freq(region, "region"),
   freq(first_pfu_year, "first PFU year"),
-  freq(treatment_function_code, "treatment function code"),
+  freq(pfu_treatment_function_code, "treatment function code"),
   freq(pfu_cat, "personalised followup category"),
   freq(count_pfu_gp, "number of pfu records"),
   freq(before_2yr_any, "any visit 2 yrs pre"),
