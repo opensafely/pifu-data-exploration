@@ -34,7 +34,7 @@ first_pfu = all_opa.where(
     ).first_for_patient()
 
 
-from dataset_definition import opa_characteristics
+from analysis.variable_functions import opa_characteristics
 
 dataset = opa_characteristics(all_opa, first_opa, first_pfu)
 
