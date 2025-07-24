@@ -71,6 +71,12 @@ for code in trt_func:
     ).opa_ident.count_distinct_for_patient()
 
 
+# Region
+first_opa = all_opa.sort_by(
+        all_opa.appointment_date
+    ).first_for_patient()
+region = practice_registrations.for_patient_on(first_opa.appointment_date).practice_nuts1_region_name
+
 
 ### Measures setup
 measures = Measures()
@@ -126,6 +132,35 @@ measures.define_measure(
     numerator=any_pfu,
     denominator=denominator & any_opa,
     )
+
+measures.define_measure(
+    name="count_region_opa",
+    numerator=count_opa,
+    group_by={"region": region},
+    denominator=denominator,
+    )
+
+measures.define_measure(
+    name="count_region_pfu",
+    numerator=count_pfu,
+    group_by={"region": region},
+    denominator=denominator & any_opa,
+    )
+
+measures.define_measure(
+    name="patients_region_opa",
+    numerator=any_opa,
+    group_by={"region": region},
+    denominator=denominator,
+    )
+
+measures.define_measure(
+    name="patients_region_pfu",
+    numerator=any_pfu,
+    group_by={"region": region},
+    denominator=denominator & any_opa,
+    )
+
 
 ###########################################
 

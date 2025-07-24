@@ -13,10 +13,9 @@ rounding <- function(vars) {
 }
 
 
-
 measures <- read_csv(here::here("output", "measures", "measures.csv")) %>%
+  subset(interval_start < as.Date("2025-06-01") & !(measure %in% c("count_region_opa","count_region_pfu","patients_region_opa","patients_region_pfu"))) %>%
   select(c("measure", "interval_start", "numerator", "denominator")) %>%
-  subset(interval_start < as.Date("2025-06-01")) %>%
   rename(month = interval_start) 
 
 measures_wide <- measures %>%
@@ -50,3 +49,44 @@ by_specialty <- all %>%
 write.csv(overall, file = here::here("output", "processed", "time_series_overall.csv"), row.names = FALSE)
 write.csv(by_specialty, file = here::here("output", "processed", "time_series_specialty.csv"), row.names = FALSE)
 
+
+###########################################################
+
+
+measures_region <- read_csv(here::here("output", "measures", "measures.csv")) %>%
+  subset(interval_start < as.Date("2025-06-01") 
+          & (measure %in% c("count_region_opa","count_region_pfu","patients_region_opa","patients_region_pfu"))
+          & !is.na(region)) %>%
+  select(c("measure", "interval_start", "numerator", "denominator", "region")) %>%
+  rename(month = interval_start ) 
+
+measures_region_wide <- measures_region %>%
+  select(!("denominator")) %>%
+  spread( "measure", "numerator")
+
+measure_region_total_denom <- measures_region %>% 
+  subset(measure == "count_region_opa") %>%
+  select(c("denominator", "month", "region")) %>%
+  rename(total_region_pop = denominator)
+
+measure_region_opa_denom <- measures_region %>% 
+  subset(measure == "count_region_pfu") %>%
+  select(c("denominator", "month", "region")) %>%
+  rename(opa_region_pop = denominator)
+
+region <- measures_region_wide %>%
+  merge(measure_region_total_denom, all = T) %>%
+  merge(measure_region_opa_denom, all = T) %>%
+  replace(is.na(.), 0) %>%
+  mutate(across(c(starts_with(c("count","patients","total","any","opa"))), rounding)) 
+
+region <- region %>%
+  select(c("month", "region", "total_region_pop", "opa_region_pop", "count_region_opa", "count_region_pfu",
+           "patients_region_opa", "patients_region_pfu"))
+
+
+# Save
+write.csv(region, file = here::here("output", "processed", "time_series_region.csv"), row.names = FALSE)
+
+
+  

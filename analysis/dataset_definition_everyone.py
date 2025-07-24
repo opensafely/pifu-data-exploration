@@ -14,9 +14,7 @@ dataset.configure_dummy_data(population_size=10000)
 all_opa = opa.where(
         opa.appointment_date.is_on_or_after("2018-06-01")
         & opa.attendance_status.is_in(["5","6"])
-    ).sort_by(
-        opa.appointment_date
-)
+    )
 
 # everyone with an outpatient visit
 first_opa = all_opa.where(
