@@ -63,13 +63,21 @@ table <- rbind(
     freq(age_group, "age"),
     freq(sex, "sex"),
     freq(region, "region"),
-    freq(treatment_function_code, "treatment function code"),
     freq(any_pfu, "personalised follow-up")
   ) %>%
     subset(!(variable == "treatment function code") | (variable == "treatment function code" & count >= 1000)) %>%
-    mutate(count = rounding(count), total = rounding(total),
-           category = ifelse(is.na(category), "missing", category),
+    mutate(category = ifelse(is.na(category), "missing", category),
            who = "All outpatients")
+
+df <- everyone %>%
+  select(starts_with(c("patient_id","any_opa_"))) %>%
+  reshape2::melt(id = "patient_id") %>%
+  mutate(treatment_function_code = substr(variable, 9, 11))
+
+table_spec <- table %>%
+  rbind(freq(treatment_function_code, "treatment function_code")) %>%
+  mutate(who = "All outpatients")
+  
 
 # Everyone rheumatology patient with outpatient visit 
 df <- rheum
@@ -77,14 +85,14 @@ table_rheum <- rbind(
   freq(age_group, "age"),
   freq(sex, "sex"),
   freq(region, "region"),
-  freq(treatment_function_code, "treatment function code"),
   freq(any_pfu, "personalised follow-up")
 ) %>%
   mutate(count = rounding(count), total = rounding(total),
          category = ifelse(is.na(category), "missing", category),
          who = "Rheumatology")
 
-both <- rbind(table, table_rheum)
+both <- rbind(table_spec, table_rheum) %>%
+  mutate(count = rounding(count), total = rounding(total))
 
 
 # Save
@@ -101,50 +109,27 @@ table_pfu <- rbind(
   freq(sex, "sex"),
   freq(region, "region"),
   freq(first_pfu_year, "first PFU year"),
-  freq(pfu_treatment_function_code, "treatment function code"),
   freq(pfu_cat, "personalised followup category"),
   freq(count_pfu_gp, "number of pfu records")
 ) %>%
   mutate(pfu_all_count = count, pfu_all_total = total) %>%
   select(!c("count", "total"))
 
-# People "moved" to personalised follow-up only (outcome_of_attendance = 4)
-df <- pfu_moved
-table_pfu_moved <- rbind(
-  freq(age_group, "age"),
-  freq(sex, "sex"),
-  freq(region, "region"),
-  freq(first_pfu_year, "first PFU year"),
-  freq(pfu_treatment_function_code, "treatment function code"),
-  freq(pfu_cat, "personalised followup category"),
-  freq(count_pfu_gp, "number of pfu records"),
-) %>%
-  mutate(pfu_moved_count = count, pfu_moved_total = total) %>%
-  select(!c("count", "total"))
+df <- pfu %>%
+  select(starts_with(c("patient_id","any_pfu_"))) %>%
+  reshape2::melt(id = "patient_id") %>%
+  mutate(treatment_function_code = substr(variable, 9, 11)) 
 
-# People "discharged" to personalised follow-up only (outcome_of_attendance = 5)
-df <- pfu_discharged
-table_pfu_discharged <- rbind(
-  freq(age_group, "age"),
-  freq(sex, "sex"),
-  freq(region, "region"),
-  freq(first_pfu_year, "first PFU year"),
-  freq(pfu_treatment_function_code, "treatment function code"),
-  freq(pfu_cat, "personalised followup category"),
-  freq(count_pfu_gp, "number of pfu records"),
-) %>%
-  mutate(pfu_discharged_count = count, pfu_discharged_total = total) %>%
-  select(!c("count", "total"))
+table_pfu_spec <- freq(treatment_function_code, "treatment function_code") %>%
+  rename(pfu_all_count = count, pfu_all_total = total) 
 
-all_pfu <- merge(table_pfu, table_pfu_moved, all = T) %>%
-  merge(table_pfu_discharged, all = T) %>% 
+all_pfu <- table_pfu_spec %>%
+  rbind(table_pfu) %>%
   fill(ends_with("total")) %>%
-  replace(is.na(.), 0) %>%
   mutate(across(c(starts_with("pfu")), rounding),
-         category = ifelse(category == 0, "missing", category)) %>%
-  subset(!(variable == "treatment function code") | (variable == "treatment function code" & pfu_all_count >= 500)) 
+         category = ifelse(is.na(category), "missing", category)) %>%
+  replace(is.na(.), 0) 
   
-
 # Save
 write.csv(all_pfu, file = here::here("output", "processed", "table_pfu.csv"), row.names = FALSE)
 
@@ -159,7 +144,6 @@ table_pfu_rheum <- rbind(
   freq(sex, "sex"),
   freq(region, "region"),
   freq(first_pfu_year, "first PFU year"),
-  freq(pfu_treatment_function_code, "treatment function code"),
   freq(pfu_cat, "personalised followup category"),
   freq(count_pfu_gp, "number of pfu records"),
   freq(before_2yr_any, "any visit 2 yrs pre"),
@@ -176,7 +160,6 @@ table_pfu_moved_rheum <- rbind(
   freq(sex, "sex"),
   freq(region, "region"),
   freq(first_pfu_year, "first PFU year"),
-  freq(pfu_treatment_function_code, "treatment function code"),
   freq(pfu_cat, "personalised followup category"),
   freq(count_pfu_gp, "number of pfu records"),
   freq(before_2yr_any, "any visit 2 yrs pre"),
@@ -193,7 +176,6 @@ table_pfu_discharged_rheum <- rbind(
   freq(sex, "sex"),
   freq(region, "region"),
   freq(first_pfu_year, "first PFU year"),
-  freq(pfu_treatment_function_code, "treatment function code"),
   freq(pfu_cat, "personalised followup category"),
   freq(count_pfu_gp, "number of pfu records"),
   freq(before_2yr_any, "any visit 2 yrs pre"),
