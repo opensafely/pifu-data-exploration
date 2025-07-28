@@ -70,11 +70,12 @@ table <- rbind(
     mutate(category = ifelse(is.na(category), "missing", category),
            who = "All outpatients")
 
-df <- everyone %>%
+table_spec1 <- everyone %>%
   select(starts_with(c("patient_id","any_opa_"))) %>%
   reshape2::melt(id = "patient_id") %>%
   mutate(treatment_function_code = substr(variable, 9, 11))
-table_spec <- df %>%
+
+table_spec2 <- table_spec1 %>%
   rename(category = treatment_function_code) %>%
   mutate(total = n_distinct(patient_id)) %>%
   group_by(total, category) %>% 
@@ -85,7 +86,7 @@ table_spec <- df %>%
   distinct() 
 
 table_all <- table %>%
-  rbind(table_spec) 
+  rbind(table_spec2) 
   
   
 # Everyone rheumatology patient with outpatient visit 
@@ -100,9 +101,28 @@ table_rheum <- rbind(
          category = ifelse(is.na(category), "missing", category),
          who = "Rheumatology")
 
-both <- rbind(table_all, table_rheum) %>%
-  mutate(count = rounding(count), total = rounding(total))
+table_rheum_spec1 <- rheum %>%
+  select(starts_with(c("patient_id","any_opa_"))) %>%
+  reshape2::melt(id = "patient_id") %>%
+  mutate(treatment_function_code = substr(variable, 9, 11))
 
+table_rheum_spec2 <- table_rheum_spec1 %>%
+  rename(category = treatment_function_code) %>%
+  mutate(total = n_distinct(patient_id)) %>%
+  group_by(total, category) %>% 
+  mutate(count = sum(value), who = "Rheumatology",
+         variable = "treatment_function_code") %>%
+  ungroup() %>%
+  select(c("variable", "category", "count", "who", "total")) %>%
+  distinct() %>%
+  subset(category == "410")
+
+table_rheum_all <- table_rheum %>%
+  rbind(table_rheum_spec2) 
+
+both <- table_all %>%
+  rbind(table_rheum_all) %>%
+  mutate(count = rounding(count), total = rounding(total)) 
 
 # Save
 write.csv(both, file = here::here("output", "processed", "table.csv"), row.names = FALSE)
