@@ -24,9 +24,10 @@ rounding <- function(vars) {
 # Create frequency distribution
 freq <- function(var, name) {
   df %>%
-    mutate(total = n(), variable = name) %>%
+    mutate(total = n_distinct(patient_id), variable = name) %>%
     group_by(variable, category = as.character({{var}}), total) %>%
-    summarise(count = n()) 
+    summarise(count = n()) %>%
+    ungroup()
 }
 
 #####
@@ -73,12 +74,20 @@ df <- everyone %>%
   select(starts_with(c("patient_id","any_opa_"))) %>%
   reshape2::melt(id = "patient_id") %>%
   mutate(treatment_function_code = substr(variable, 9, 11))
+table_spec <- df %>%
+  rename(category = treatment_function_code) %>%
+  mutate(total = n_distinct(patient_id)) %>%
+  group_by(total, category) %>% 
+  mutate(count = sum(value), who = "All outpatients",
+         variable = "treatment_function_code") %>%
+  ungroup() %>%
+  select(c("variable", "category", "count", "who", "total")) %>%
+  distinct() 
 
-table_spec <- table %>%
-  rbind(freq(treatment_function_code, "treatment function_code")) %>%
-  mutate(who = "All outpatients")
+table_all <- table %>%
+  rbind(table_spec) 
   
-
+  
 # Everyone rheumatology patient with outpatient visit 
 df <- rheum
 table_rheum <- rbind(
@@ -91,7 +100,7 @@ table_rheum <- rbind(
          category = ifelse(is.na(category), "missing", category),
          who = "Rheumatology")
 
-both <- rbind(table_spec, table_rheum) %>%
+both <- rbind(table_all, table_rheum) %>%
   mutate(count = rounding(count), total = rounding(total))
 
 
@@ -119,19 +128,24 @@ df <- pfu %>%
   select(starts_with(c("patient_id","any_pfu_"))) %>%
   reshape2::melt(id = "patient_id") %>%
   mutate(treatment_function_code = substr(variable, 9, 11)) 
+table_pfu_spec <- df %>%
+  rename(category = treatment_function_code) %>%
+  mutate(pfu_all_total = n_distinct(patient_id)) %>%
+  group_by(pfu_all_total, category) %>% 
+  mutate(pfu_all_count = sum(value), 
+         variable = "treatment_function_code") %>%
+  ungroup() %>%
+  select(c("variable", "category", "pfu_all_count","pfu_all_total")) %>%
+  distinct() 
 
-table_pfu_spec <- freq(treatment_function_code, "treatment function_code") %>%
-  rename(pfu_all_count = count, pfu_all_total = total) 
-
-all_pfu <- table_pfu_spec %>%
-  rbind(table_pfu) %>%
-  fill(ends_with("total")) %>%
+table_pfu_all <- table_pfu %>%
+  rbind(table_pfu_spec) %>%
   mutate(across(c(starts_with("pfu")), rounding),
-         category = ifelse(is.na(category), "missing", category)) %>%
+       category = ifelse(is.na(category), "missing", category)) %>%
   replace(is.na(.), 0) 
   
 # Save
-write.csv(all_pfu, file = here::here("output", "processed", "table_pfu.csv"), row.names = FALSE)
+write.csv(table_pfu_all, file = here::here("output", "processed", "table_pfu.csv"), row.names = FALSE)
 
 
 #####################
