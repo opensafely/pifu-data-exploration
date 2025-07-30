@@ -57,8 +57,8 @@ for code in trt_func:
         & all_opa.appointment_date.is_on_or_after("2022-06-01")
     ).exists_for_patient()
 
-dataset.add_column(f"any_pfu_{code}", count_var["any_pfu_" + code])
-dataset.add_column(f"any_opa_{code}", count_var["any_opa_" + code])
+    dataset.add_column(f"any_pfu_{code}", count_var["any_pfu_" + code])
+    dataset.add_column(f"any_opa_{code}", count_var["any_opa_" + code])
 
 
 ######################################

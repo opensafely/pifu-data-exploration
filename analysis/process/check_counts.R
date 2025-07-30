@@ -1,3 +1,7 @@
+####################################################################
+# compare counts of people with a rheumatology outpatient visits
+# generated from two different dataset defs
+####################################################################
 
 # Import libraries #
 library('tidyverse')
@@ -20,17 +24,20 @@ freq <- function(var, name) {
 
 #####
 
-# Read in data
+# output from "generate_dataset"
 df <- read_csv(here::here("output", "dataset_everyone.csv.gz")) 
+count_everyone <- rbind(
+  freq(any_opa_410, "All rheumatology - full dataset"),
+  freq(any_pfu_410, "PFU rheumatology - full dataset")
+)
 
-count_everyone <- freq(any_opa_410, "Rheumatology - full dataset")
-
-
+# output fromn"generate_dataset_rheum"
 df <- read_csv(here::here("output", "dataset_rheum.csv.gz")) 
+count_rheum <- rbind(
+  freq(any_opa_410, "All rheumatology - rheum-only dataset"),
+  freq(any_opa_410, "PFU rheumatology - rheum-only dataset")
+)
 
-count_rheum <- freq(any_opa_410, "Rheumatology - rheum-only dataset")
-
+# combine and save
 both <- rbind(count_everyone, count_rheum)
-
-# Save
 write.csv(both, file = here::here("output", "processed", "check_counts.csv"), row.names = FALSE)
