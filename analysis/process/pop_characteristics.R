@@ -45,7 +45,7 @@ pfu_discharged <- everyone %>% subset(any_pfu == TRUE & pfu_cat == "5")
 
 
 rheum <- read_csv(here::here("output", "dataset_rheum.csv.gz")) %>%
-  mutate(count_pfu_gp = ifelse(count_pfu >= 4, "4+", as.character(count_pfu)),
+  mutate(count_pfu_gp = ifelse(count_pfu >= 3, "3+", as.character(count_pfu)),
          before_2yr_any = (before_2yr > 0),
          before_1yr_any = (before_1yr > 0),
          after_1yr_any = (after_1yr > 0))
@@ -66,30 +66,23 @@ table <- rbind(
     freq(region, "region"),
     freq(any_pfu, "personalised follow-up")
   ) %>%
-    subset(!(variable == "treatment function code") | (variable == "treatment function code" & count >= 1000)) %>%
-    mutate(category = ifelse(is.na(category), "missing", category),
+  mutate(category = ifelse(is.na(category), "missing", category),
            who = "All outpatients")
 
-table_spec1 <- everyone %>%
+table_spec <- everyone %>%
   select(starts_with(c("patient_id","any_opa_"))) %>%
   reshape2::melt(id = "patient_id") %>%
-  mutate(treatment_function_code = substr(variable, 9, 11))
-
-table_spec2 <- table_spec1 %>%
-  rename(category = treatment_function_code) %>%
-  mutate(total = n_distinct(patient_id)) %>%
+  mutate(category = substr(variable, 9, 11), total = n_distinct(patient_id)) %>%
   group_by(total, category) %>% 
-  mutate(count = sum(value), who = "All outpatients",
-         variable = "treatment_function_code") %>%
+  mutate(count = sum(value), who = "All outpatients", variable = "treatment_function_code") %>%
   ungroup() %>%
   select(c("variable", "category", "count", "who", "total")) %>%
   distinct() 
 
 table_all <- table %>%
-  rbind(table_spec2) 
+  rbind(table_spec) 
   
-  
-# Everyone rheumatology patient with outpatient visit 
+# rheumatology patient with outpatient visit 
 df <- rheum
 table_rheum <- rbind(
   freq(age_group, "age"),
@@ -101,27 +94,9 @@ table_rheum <- rbind(
          category = ifelse(is.na(category), "missing", category),
          who = "Rheumatology")
 
-table_rheum_spec1 <- rheum %>%
-  select(starts_with(c("patient_id","any_opa_"))) %>%
-  reshape2::melt(id = "patient_id") %>%
-  mutate(treatment_function_code = substr(variable, 9, 11))
-
-table_rheum_spec2 <- table_rheum_spec1 %>%
-  rename(category = treatment_function_code) %>%
-  mutate(total = n_distinct(patient_id)) %>%
-  group_by(total, category) %>% 
-  mutate(count = sum(value), who = "Rheumatology",
-         variable = "treatment_function_code") %>%
-  ungroup() %>%
-  select(c("variable", "category", "count", "who", "total")) %>%
-  distinct() %>%
-  subset(category == "410")
-
-table_rheum_all <- table_rheum %>%
-  rbind(table_rheum_spec2) 
-
+# Combine everyone and rheumatology
 both <- table_all %>%
-  rbind(table_rheum_all) %>%
+  rbind(table_rheum) %>%
   mutate(count = rounding(count), total = rounding(total)) 
 
 # Save
@@ -144,18 +119,16 @@ table_pfu <- rbind(
   mutate(pfu_all_count = count, pfu_all_total = total) %>%
   select(!c("count", "total"))
 
-df <- pfu %>%
+table_pfu_spec <- pfu %>%
   select(starts_with(c("patient_id","any_pfu_"))) %>%
   reshape2::melt(id = "patient_id") %>%
-  mutate(treatment_function_code = substr(variable, 9, 11)) 
-table_pfu_spec <- df %>%
-  rename(category = treatment_function_code) %>%
-  mutate(pfu_all_total = n_distinct(patient_id)) %>%
+  mutate(category = substr(variable, 9, 11),
+         pfu_all_total = n_distinct(patient_id)) %>%
   group_by(pfu_all_total, category) %>% 
   mutate(pfu_all_count = sum(value), 
          variable = "treatment_function_code") %>%
   ungroup() %>%
-  select(c("variable", "category", "pfu_all_count","pfu_all_total")) %>%
+  select(c("variable", "category", "pfu_all_count", "pfu_all_total")) %>%
   distinct() 
 
 table_pfu_all <- table_pfu %>%

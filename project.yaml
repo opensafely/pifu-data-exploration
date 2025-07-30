@@ -52,3 +52,9 @@ actions:
         timeseries1: output/processed/time_series_overall.csv
         timeseries2: output/processed/time_series_specialty.csv
 
+  checks:
+    run: r:latest analysis/process/check_counts.R
+    needs: [generate_dataset, generate_dataset_rheum]
+    outputs:
+      moderately_sensitive:
+        csv: output/processed/check_counts.csv
