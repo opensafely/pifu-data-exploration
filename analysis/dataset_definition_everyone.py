@@ -16,25 +16,9 @@ all_opa = opa.where(
         & opa.attendance_status.is_in(["5","6"])
     )
 
-# everyone with an outpatient visit
-first_opa = all_opa.where(
-        all_opa.appointment_date.is_on_or_after("2022-06-01")
-    ).sort_by(
-        all_opa.appointment_date
-    ).first_for_patient()
-
-# first personalised pathway record
-first_pfu = all_opa.where(
-        all_opa.outcome_of_attendance.is_in(["4","5"]) 
-        & all_opa.appointment_date.is_on_or_after("2022-06-01")
-    ).sort_by(
-        all_opa.appointment_date
-    ).first_for_patient()
-
-
 from analysis.variable_functions import opa_characteristics
 
-dataset = opa_characteristics(all_opa, first_opa, first_pfu)
+dataset = opa_characteristics(all_opa)
 
 
 ###################################
@@ -70,5 +54,5 @@ dataset.define_population(
     & ((dataset.sex == "male") | (dataset.sex == "female"))
     & (patients.date_of_death.is_after(dataset.first_opa_date) | patients.date_of_death.is_null())
     & (practice_registrations.for_patient_on(dataset.first_opa_date).exists_for_patient())
-    & first_opa.exists_for_patient()
+    & dataset.first_opa_date.is_not_null()
 )
