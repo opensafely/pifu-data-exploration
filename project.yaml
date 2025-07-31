@@ -42,7 +42,6 @@ actions:
         table1: output/processed/table.csv
         table2: output/processed/table_pfu.csv
         table3: output/processed/table_rheum.csv
-        table4: output/processed/visits_stats.csv
 
   time_series:
     run: r:latest analysis/process/measures_process.R
@@ -52,9 +51,9 @@ actions:
         timeseries1: output/processed/time_series_overall.csv
         timeseries2: output/processed/time_series_specialty.csv
 
-  checks:
-    run: r:latest analysis/process/check_counts.R
-    needs: [generate_dataset, generate_dataset_rheum]
+  visits:
+    run: r:latest analysis/process/visit_stats.R
+    needs: [generate_dataset_rheum]
     outputs:
       moderately_sensitive:
-        csv: output/processed/check_counts.csv
+        table: output/processed/visit_stats.csv
