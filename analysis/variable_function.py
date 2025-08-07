@@ -3,7 +3,7 @@
 ####################################################################
 
 
-from ehrql import create_dataset, case, when, years, days, weeks, show
+from ehrql import create_dataset, case, when, years, days, weeks, minimum_of
 from ehrql.tables.tpp import patients, practice_registrations, clinical_events, opa
 
 dataset = create_dataset()
@@ -99,6 +99,16 @@ def opa_characteristics(all_opa):
     )
 
     dataset.region = practice_registrations.for_patient_on(dataset.first_opa_date).practice_nuts1_region_name
+
+    dataset.deregister_date = practice_registrations.where(
+            practice_registrations.end_date.is_on_or_after("2022-06-01")
+        ).sort_by(
+            practice_registrations.end_date
+        ).last_for_patient()
+    
+    dataset.dod = patients.date_of_death
+
+    dataset.fu_days = (minimum_of(dataset.dod, dataset.deregister_date, "2025-05-31"), dataset.first_pfu_date).days
 
     return dataset
 

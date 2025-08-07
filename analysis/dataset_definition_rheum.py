@@ -17,7 +17,7 @@ all_opa = opa.where(
         & opa.attendance_status.is_in(["5","6"])
     )
 
-from analysis.variable_functions import opa_characteristics
+from analysis.variable_function import opa_characteristics
 
 dataset = opa_characteristics(all_opa)
 

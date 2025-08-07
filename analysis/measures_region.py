@@ -110,27 +110,30 @@ measures.define_measure(
 
 # Number of people with an outpatient visit
 measures.define_measure(
-    name="count_opa",
+    name="count_region_opa",
     numerator=count_opa,
+    group_by={"region": region},
     denominator=denominator,
     )
 
 measures.define_measure(
-    name="patients_opa",
-    numerator=any_opa,
-    denominator=denominator,
-    )
-
-# Number of people with a personalised follow-up visit
-measures.define_measure(
-    name="count_pfu",
+    name="count_region_pfu",
     numerator=count_pfu,
+    group_by={"region": region},
     denominator=denominator & any_opa,
     )
 
 measures.define_measure(
-    name="patients_pfu",
+    name="patients_region_opa",
+    numerator=any_opa,
+    group_by={"region": region},
+    denominator=denominator,
+    )
+
+measures.define_measure(
+    name="patients_region_pfu",
     numerator=any_pfu,
+    group_by={"region": region},
     denominator=denominator & any_opa,
     )
 
@@ -141,20 +144,27 @@ for code in trt_func:
     measures.define_measure(
         name=f"any_opa_{code}",
         numerator=count_var["any_opa_" + code],
+        group_by={"region": region},
         denominator = denominator,
     )
     measures.define_measure(
         name=f"any_pfu_{code}",
         numerator=count_var["any_pfu_" + code],
+        group_by={"region": region},
         denominator = denominator & any_opa,
     )
     measures.define_measure(
         name=f"count_opa_{code}",
         numerator=count_var["count_opa_" + code],
+        group_by={"region": region},
         denominator = denominator,
     )
     measures.define_measure(
         name=f"count_pfu_{code}",
         numerator=count_var["count_pfu_" + code],
+        group_by={"region": region},
         denominator = denominator & any_opa,
     )
+
+
+    

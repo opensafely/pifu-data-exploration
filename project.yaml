@@ -34,6 +34,12 @@ actions:
       moderately_sensitive:
         dataset: output/measures/measures.csv
 
+  measures_region:
+    run: ehrql:v1 generate-measures analysis/measures.py --output output/measures/measures_region.csv
+    outputs:
+      moderately_sensitive:
+        dataset: output/measures/measures_region.csv
+
   table:
     run: r:latest analysis/process/pop_characteristics.R
     needs: [generate_dataset, generate_dataset_rheum]
