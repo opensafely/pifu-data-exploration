@@ -10,7 +10,6 @@ The content has ONLY been made public to support the OpenSAFELY [open science an
 No clinical, policy or safety conclusions must be drawn from the contents of this repository.
 
 # About the OpenSAFELY framework
-
 The OpenSAFELY framework is a Trusted Research Environment (TRE) for electronic
 health records research in the NHS, with a focus on public accountability and
 research quality.
