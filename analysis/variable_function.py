@@ -104,11 +104,11 @@ def opa_characteristics(all_opa):
             practice_registrations.end_date.is_on_or_after("2022-06-01")
         ).sort_by(
             practice_registrations.end_date
-        ).last_for_patient()
+        ).last_for_patient().end_date
     
     dataset.dod = patients.date_of_death
 
-    dataset.fu_days = (minimum_of(dataset.dod, dataset.deregister_date, "2025-05-31"), dataset.first_pfu_date).days
+    dataset.fu_days = (minimum_of(dataset.dod, dataset.deregister_date, "2025-05-31") - dataset.first_pfu_date).days
 
     return dataset
 

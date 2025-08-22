@@ -71,12 +71,6 @@ for code in trt_func:
     ).opa_ident.count_distinct_for_patient()
 
 
-# Region
-first_opa = all_opa.sort_by(
-        all_opa.appointment_date
-    ).first_for_patient()
-region = practice_registrations.for_patient_on(first_opa.appointment_date).practice_nuts1_region_name
-
 
 ### Measures setup
 measures = Measures()
