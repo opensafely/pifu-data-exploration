@@ -74,7 +74,7 @@ denominator = (
         & ((patients.sex == "male") | (patients.sex == "female"))
         & (patients.date_of_death.is_after(INTERVAL.start_date) | patients.date_of_death.is_null())
         & (practice_registrations.for_patient_on(INTERVAL.start_date).exists_for_patient())
-        & (region == "param_region")
+        & (region == param_region)
     )
 
 measures.define_defaults(
