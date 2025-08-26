@@ -122,6 +122,14 @@ actions:
       moderately_sensitive:
         timeseries1: output/processed/time_series_overall.csv
         timeseries2: output/processed/time_series_specialty.csv
+  
+  time_series_region:
+    run: r:latest analysis/process/measures_region_process.R
+    needs: [measures_london, measures_east, measures_eastmidlands, measures_northeast, measures_northwest, measures_southeast, measures_southwest, measures_westmidlands, measures_yorkshire]
+    outputs:
+      moderately_sensitive:
+        timeseries1: output/processed/ts_*.csv
+        timeseries2: output/processed/ts_sp*.csv
 
   visits:
     run: r:latest analysis/process/visit_stats.R
