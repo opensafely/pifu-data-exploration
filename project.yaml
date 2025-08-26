@@ -34,6 +34,78 @@ actions:
       moderately_sensitive:
         dataset: output/measures/measures.csv
 
+  measures_london:
+    run: ehrql:v1 generate-measures analysis/measures_region.py --output output/measures/measures_london.csv 
+      -- 
+      --param_region London
+    outputs:
+      moderately_sensitive:
+        dataset: output/measures/measures_london.csv
+
+  measures_northeast:
+    run: ehrql:v1 generate-measures analysis/measures_region.py --output output/measures/measures_northeast.csv 
+      -- 
+      --param_region 'North East'
+    outputs:
+      moderately_sensitive:
+        dataset: output/measures/measures_northeast.csv
+
+  measures_northwest:
+    run: ehrql:v1 generate-measures analysis/measures_region.py --output output/measures/measures_northwest.csv 
+      -- 
+      --param_region 'North West'
+    outputs:
+      moderately_sensitive:
+        dataset: output/measures/measures_northwest.csv
+
+  measures_yorkshire:
+    run: ehrql:v1 generate-measures analysis/measures_region.py --output output/measures/measures_yorkshire.csv 
+      --
+      --param_region 'Yorkshire and The Humber'
+    outputs:
+      moderately_sensitive:
+        dataset: output/measures/measures_yorkshire.csv
+
+  measures_eastmidlands:
+    run: ehrql:v1 generate-measures analysis/measures_region.py --output output/measures/measures_eastmidlands.csv 
+      --
+      --param_region 'East Midlands'
+    outputs:
+      moderately_sensitive:
+        dataset: output/measures/measures_eastmidlands.csv
+
+  measures_westmidlands:
+    run: ehrql:v1 generate-measures analysis/measures_region.py --output output/measures/measures_westmidlands.csv 
+      -- 
+      --param_region 'West Midlands'
+    outputs:
+      moderately_sensitive:
+        dataset: output/measures/measures_westmidlands.csv
+
+  measures_east:
+    run: ehrql:v1 generate-measures analysis/measures_region.py --output output/measures/measures_east.csv 
+      --
+      --param_region East
+    outputs:
+      moderately_sensitive:
+        dataset: output/measures/measures_east.csv
+
+  measures_southeast:
+    run: ehrql:v1 generate-measures analysis/measures_region.py --output output/measures/measures_southeast.csv 
+      --
+      --param_region 'South East'
+    outputs:
+      moderately_sensitive:
+        dataset: output/measures/measures_southeast.csv
+
+  measures_southwest:
+    run: ehrql:v1 generate-measures analysis/measures_region.py --output output/measures/measures_southwest.csv 
+      --
+      --param_region 'South West'
+    outputs:
+      moderately_sensitive:
+        dataset: output/measures/measures_southwest.csv
+
   table:
     run: r:latest analysis/process/pop_characteristics.R
     needs: [generate_dataset, generate_dataset_rheum]
@@ -50,6 +122,14 @@ actions:
       moderately_sensitive:
         timeseries1: output/processed/time_series_overall.csv
         timeseries2: output/processed/time_series_specialty.csv
+  
+  time_series_region:
+    run: r:latest analysis/process/measures_region_process.R
+    needs: [measures_london, measures_east, measures_eastmidlands, measures_northeast, measures_northwest, measures_southeast, measures_southwest, measures_westmidlands, measures_yorkshire]
+    outputs:
+      moderately_sensitive:
+        timeseries1: output/processed/ts_*.csv
+        timeseries2: output/processed/ts_sp*.csv
 
   visits:
     run: r:latest analysis/process/visit_stats.R

@@ -3,7 +3,7 @@
 #################################################################
 
 
-from ehrql import create_dataset, case, when, years, days, weeks, show
+from ehrql import create_dataset, case, when, years, days, weeks
 from ehrql.tables.tpp import patients, practice_registrations, clinical_events, opa
 
 dataset = create_dataset()
@@ -16,7 +16,7 @@ all_opa = opa.where(
         & opa.attendance_status.is_in(["5","6"])
     )
 
-from analysis.variable_functions import opa_characteristics
+from analysis.variable_function import opa_characteristics
 
 dataset = opa_characteristics(all_opa)
 
