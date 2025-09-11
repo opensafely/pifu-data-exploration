@@ -24,7 +24,7 @@ dataset = opa_characteristics(all_opa)
 ###################################
     
 # By treatment specialty (only include most common groups reported in public statistics)
-trt_func = ["100","101","110","120","130","140","150","160","170","300","301","320","330","340","400","410","430","502"]
+trt_func = ["110","120","330","410","101","502","X06","X02","X04","X05"]
 
 count_var = {}
 
@@ -49,7 +49,8 @@ for code in trt_func:
 
 # define population - everyone with an outpatient visit
 dataset.define_population(
-    (dataset.age >= 18) 
+    #(dataset.age >= 18) 
+    (dataset.age >= 0)
     & (dataset.age < 110) 
     & ((dataset.sex == "male") | (dataset.sex == "female"))
     & (patients.date_of_death.is_after(dataset.first_opa_date) | patients.date_of_death.is_null())
