@@ -87,6 +87,7 @@ def opa_characteristics(all_opa):
 
     dataset.age = patients.age_on(dataset.first_opa_date)
     dataset.age_group = case(
+            when(dataset.age < 18).then("0-17"),
             when(dataset.age < 30).then("18-29"),
             when(dataset.age < 40).then("30-39"),
             when(dataset.age < 50).then("40-49"),
@@ -100,10 +101,12 @@ def opa_characteristics(all_opa):
 
     dataset.region = practice_registrations.for_patient_on(dataset.first_opa_date).practice_nuts1_region_name
 
-    dataset.deregister_date = practice_registrations.where(
-            practice_registrations.end_date.is_on_or_after("2022-06-01")
+    active_registrations = practice_registrations.for_patient_on(dataset.first_opa_date)
+
+    dataset.deregister_date = active_registrations.where(
+            active_registrations.end_date.is_on_or_after("2022-06-01")
         ).sort_by(
-            practice_registrations.end_date
+            active_registrations.start_date
         ).last_for_patient().end_date
     
     dataset.dod = patients.date_of_death

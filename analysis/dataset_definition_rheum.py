@@ -26,7 +26,8 @@ dataset = opa_characteristics(all_opa)
 
 # define population - everyone with a rheum outpatient visit
 dataset.define_population(
-    (dataset.age >= 18) 
+    #(dataset.age >= 18) 
+    (dataset.age >= 0)
     & (dataset.age < 110) 
     & ((dataset.sex == "male") | (dataset.sex == "female"))
     & (patients.date_of_death.is_after(dataset.first_opa_date) | patients.date_of_death.is_null())

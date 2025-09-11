@@ -47,8 +47,9 @@ count_opa = all_opa.opa_ident.count_distinct_for_patient()
 count_pfu = all_pfu.opa_ident.count_distinct_for_patient()
 
 
-# By treatment specialty (only include most common groups reported in public statistics)
-trt_func = ["100","101","110","120","130","140","150","160","170","300","301","320","330","340","400","410","430","502"]
+# By treatment specialty (only include top 10 most common groups reported in public statistics)
+trt_func = ["110","120","330","410","101","502","X06","X02","X04","X05"]
+
 
 count_var = {}
 
@@ -99,7 +100,7 @@ measures.define_measure(
     denominator=denominator,
     )
 
-##################
+#########################
 
 
 # Number of people with an outpatient visit
