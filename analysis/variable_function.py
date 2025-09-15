@@ -101,13 +101,7 @@ def opa_characteristics(all_opa):
 
     dataset.region = practice_registrations.for_patient_on(dataset.first_opa_date).practice_nuts1_region_name
 
-    active_registrations = practice_registrations.for_patient_on(dataset.first_opa_date)
-
-    dataset.deregister_date = active_registrations.where(
-            active_registrations.end_date.is_on_or_after("2022-06-01")
-        ).sort_by(
-            active_registrations.start_date
-        ).last_for_patient().end_date
+    dataset.deregister_date = practice_registrations.for_patient_on(dataset.first_opa_date).end_date
     
     dataset.dod = patients.date_of_death
 
