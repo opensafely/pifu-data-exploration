@@ -85,17 +85,31 @@ def opa_characteristics(all_opa):
     # demographics
     dataset.sex = patients.sex
 
-    dataset.age = patients.age_on(dataset.first_opa_date)
-    dataset.age_group = case(
-            when(dataset.age < 18).then("0-17"),
-            when(dataset.age < 30).then("18-29"),
-            when(dataset.age < 40).then("30-39"),
-            when(dataset.age < 50).then("40-49"),
-            when(dataset.age < 60).then("50-59"),
-            when(dataset.age < 70).then("60-69"),
-            when(dataset.age < 80).then("70-79"),
-            when(dataset.age < 90).then("80-89"),
-            when(dataset.age >= 90).then("90+"),
+    dataset.age_opa = patients.age_on(dataset.first_opa_date)
+    dataset.age_opa_group = case(
+            when(dataset.age_opa < 18).then("0-17"),
+            when(dataset.age_opa < 30).then("18-29"),
+            when(dataset.age_opa < 40).then("30-39"),
+            when(dataset.age_opa < 50).then("40-49"),
+            when(dataset.age_opa < 60).then("50-59"),
+            when(dataset.age_opa < 70).then("60-69"),
+            when(dataset.age_opa < 80).then("70-79"),
+            when(dataset.age_opa < 90).then("80-89"),
+            when(dataset.age_opa >= 90).then("90+"),
+            otherwise="missing",
+    )
+
+    dataset.age_pfu = patients.age_on(dataset.first_pfu_date)
+    dataset.age_pfu_group = case(
+            when(dataset.age_pfu < 18).then("0-17"),
+            when(dataset.age_pfu < 30).then("18-29"),
+            when(dataset.age_pfu < 40).then("30-39"),
+            when(dataset.age_pfu < 50).then("40-49"),
+            when(dataset.age_pfu < 60).then("50-59"),
+            when(dataset.age_pfu < 70).then("60-69"),
+            when(dataset.age_pfu < 80).then("70-79"),
+            when(dataset.age_pfu < 90).then("80-89"),
+            when(dataset.age_pfu >= 90).then("90+"),
             otherwise="missing",
     )
 

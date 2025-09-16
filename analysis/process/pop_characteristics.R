@@ -61,7 +61,7 @@ pfu_discharged_rheum <- rheum %>% subset(any_pfu == TRUE & pfu_cat == "5")
 # Everyone with outpatient visit
 df <- everyone
 table <- rbind(
-    freq(age_group, "age"),
+    freq(age_opa_group, "age"),
     freq(sex, "sex"),
     freq(region, "region"),
     freq(any_pfu, "personalised follow-up")
@@ -85,7 +85,7 @@ table_all <- table %>%
 # rheumatology patient with outpatient visit 
 df <- rheum
 table_rheum <- rbind(
-  freq(age_group, "age"),
+  freq(age_opa_group, "age"),
   freq(sex, "sex"),
   freq(region, "region"),
   freq(any_pfu, "personalised follow-up")
@@ -109,7 +109,7 @@ write.csv(both, file = here::here("output", "processed", "table.csv"), row.names
 # People with personalised follow-up only
 df <- pfu
 table_pfu <- rbind(
-  freq(age_group, "age"),
+  freq(age_pfu_group, "age"),
   freq(sex, "sex"),
   freq(region, "region"),
   freq(first_pfu_year, "first PFU year"),
@@ -147,7 +147,7 @@ write.csv(table_pfu_all, file = here::here("output", "processed", "table_pfu.csv
 # People with personalised follow-up only
 df <- pfu_rheum
 table_pfu_rheum <- rbind(
-  freq(age_group, "age"),
+  freq(age_pfu_group, "age"),
   freq(sex, "sex"),
   freq(region, "region"),
   freq(first_pfu_year, "first PFU year"),
@@ -163,7 +163,7 @@ table_pfu_rheum <- rbind(
 # People "moved" to personalised follow-up only (outcome_of_attendance = 4)
 df <- pfu_moved_rheum
 table_pfu_moved_rheum <- rbind(
-  freq(age_group, "age"),
+  freq(age_pfu_group, "age"),
   freq(sex, "sex"),
   freq(region, "region"),
   freq(first_pfu_year, "first PFU year"),
@@ -179,7 +179,7 @@ table_pfu_moved_rheum <- rbind(
 # People "discharged" to personalised follow-up only (outcome_of_attendance = 5)
 df <- pfu_discharged_rheum
 table_pfu_discharged_rheum <- rbind(
-  freq(age_group, "age"),
+  freq(age_pfu_group, "age"),
   freq(sex, "sex"),
   freq(region, "region"),
   freq(first_pfu_year, "first PFU year"),
