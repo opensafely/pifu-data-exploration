@@ -4,7 +4,7 @@
 #################################################################
 
 
-from ehrql import months, INTERVAL, Measures
+from ehrql import months, INTERVAL, Measures, case, when
 from ehrql.tables.tpp import (
     patients, 
     practice_registrations,
@@ -48,27 +48,76 @@ count_pfu = all_pfu.opa_ident.count_distinct_for_patient()
 
 
 # By treatment specialty (only include top 10 most common groups reported in public statistics)
-trt_func = ["110","120","330","410","101","502","X06","X02","X04","X05"]
+# from here: https://v3.datadictionary.nhs.uk/web_site_content/supporting_information/main_specialty_and_treatment_function_codes_table.asp%40shownav%3D1.html
+all_opa.treatment_function_code2 = case(
+    when(all_opa.treatment_function_code.is_in(["110"])).then("110"),
+    when(all_opa.treatment_function_code.is_in(["120"])).then("120"),
+    when(all_opa.treatment_function_code.is_in(["330"])).then("330"),
+    when(all_opa.treatment_function_code.is_in(["410"])).then("410"),
+    when(all_opa.treatment_function_code.is_in(["101"])).then("101"),
+    when(all_opa.treatment_function_code.is_in(["502"])).then("502"),
+    when(all_opa.treatment_function_code.is_in(["180","190","191","192","200","300","301","302","303",
+        "304","305","306","307","308","309","310","311","313","314","315","317","318","319","320","322",
+        "323","324","325","326","327","328","329","330","331","333","335","340","341","342","343","344","345",
+        "346","347","348","350","352","360","361","370","371","400","401","410","420","422","424","430","431","450",
+        "451","460","461","501","502","503","504","505","834"])).then("MED"),
+    when(all_opa.treatment_function_code.is_in(["100","101","102","103","104","105","106","107","108","109",
+        "110","111","113","115","120","130","140","141","143","144","145","150","160","161","170","172","173","174"])).then("SUR"),
+    when(all_opa.treatment_function_code.is_in(["142","171","211","212","213","214","215","216","217","218","219",
+        "220","221","222","223","230","240","241","242","250","251","252","253","254","255","256","257","258","259",
+        "260","261","262","263","264","270","280","290","291","321","421"])).then("PAE"),
+    when(all_opa.treatment_function_code.is_in(["656","700","710","711","712","713","715","720","721","722","723",
+        "724","725","726","727","730"])).then("MEN"),
+    when(all_opa.treatment_function_code.is_in(["560","650","651","652","653","654","655","657","658","659","660",
+        "661","662","663","670","673","675","677","800","811","812","822","840","920"])).then("OTH"),
+    otherwise=all_opa.treatment_function_code
+)
 
+all_pfu.treatment_function_code2 = case(
+    when(all_pfu.treatment_function_code.is_in(["110"])).then("110"),
+    when(all_pfu.treatment_function_code.is_in(["120"])).then("120"),
+    when(all_pfu.treatment_function_code.is_in(["330"])).then("330"),
+    when(all_pfu.treatment_function_code.is_in(["410"])).then("410"),
+    when(all_pfu.treatment_function_code.is_in(["101"])).then("101"),
+    when(all_pfu.treatment_function_code.is_in(["502"])).then("502"),
+    when(all_pfu.treatment_function_code.is_in(["180","190","191","192","200","300","301","302","303",
+        "304","305","306","307","308","309","310","311","313","314","315","317","318","319","320","322",
+        "323","324","325","326","327","328","329","330","331","333","335","340","341","342","343","344","345",
+        "346","347","348","350","352","360","361","370","371","400","401","410","420","422","424","430","431","450",
+        "451","460","461","501","502","503","504","505","834"])).then("MED"),
+    when(all_pfu.treatment_function_code.is_in(["100","101","102","103","104","105","106","107","108","109",
+        "110","111","113","115","120","130","140","141","143","144","145","150","160","161","170","172","173","174"])).then("SUR"),
+    when(all_pfu.treatment_function_code.is_in(["142","171","211","212","213","214","215","216","217","218","219",
+        "220","221","222","223","230","240","241","242","250","251","252","253","254","255","256","257","258","259",
+        "260","261","262","263","264","270","280","290","291","321","421"])).then("PAE"),
+    when(all_pfu.treatment_function_code.is_in(["656","700","710","711","712","713","715","720","721","722","723",
+        "724","725","726","727","730"])).then("MEN"),
+    when(all_pfu.treatment_function_code.is_in(["560","650","651","652","653","654","655","657","658","659","660",
+        "661","662","663","670","673","675","677","800","811","812","822","840","920"])).then("OTH"),
+    otherwise=all_pfu.treatment_function_code
+)
+
+
+trt_func = ["110","120","330","410","101","502","MED","SUR","PAE","MEN","OTH"]
 
 count_var = {}
 
 for code in trt_func:
 
     count_var["any_opa_" + code] = all_opa.where(
-        all_opa.treatment_function_code.is_in([code])
+        all_opa.treatment_function_code2.is_in([code])
     ).exists_for_patient()
 
     count_var["any_pfu_" + code] = all_pfu.where(
-        all_pfu.treatment_function_code.is_in([code])
+        all_pfu.treatment_function_code2.is_in([code])
     ).exists_for_patient()
 
     count_var["count_opa_" + code] = all_opa.where(
-        all_opa.treatment_function_code.is_in([code])
+        all_opa.treatment_function_code2.is_in([code])
     ).opa_ident.count_distinct_for_patient()
     
     count_var["count_pfu_" + code] = all_pfu.where(
-        all_pfu.treatment_function_code.is_in([code])
+        all_pfu.treatment_function_code2.is_in([code])
     ).opa_ident.count_distinct_for_patient()
 
 
