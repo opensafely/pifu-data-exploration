@@ -16,28 +16,48 @@ all_opa = opa.where(
         & opa.attendance_status.is_in(["5","6"])
     )
 
+# pfu only
+pfu_only = all_opa.where(
+        all_opa.outcome_of_attendance.is_in(["4","5"])
+        & all_opa.appointment_date.is_on_or_after("2022-06-01")
+    )
+
 from analysis.variable_function import opa_characteristics
 
-dataset = opa_characteristics(all_opa)
+dataset = opa_characteristics(all_opa, pfu_only)
 
 
 ###################################
-    
+
 # By treatment specialty (only include most common groups reported in public statistics)
-trt_func = ["110","120","330","410","101","502","X06","X02","X04","X05"]
+trt_func = ["110","120","330","410","101","502"]
+trt_func_gp = ["MED","SUR","PAE","MEN","OTH"]
 
 count_var = {}
 
 for code in trt_func:
 
-    count_var["any_pfu_" + code] = all_opa.where(
-        all_opa.treatment_function_code.is_in([code])
-        & all_opa.outcome_of_attendance.is_in(["4","5"]) 
-        & all_opa.appointment_date.is_on_or_after("2022-06-01")
+    count_var["any_pfu_" + code] = pfu_only.where(
+        pfu_only.treatment_function_code.is_in([code])
     ).exists_for_patient()
 
     count_var["any_opa_" + code] = all_opa.where(
         all_opa.treatment_function_code.is_in([code])
+        & all_opa.appointment_date.is_on_or_after("2022-06-01")
+    ).exists_for_patient()
+
+    dataset.add_column(f"any_pfu_{code}", count_var["any_pfu_" + code])
+    dataset.add_column(f"any_opa_{code}", count_var["any_opa_" + code])
+
+
+for code in trt_func_gp:
+
+    count_var["any_pfu_" + code] = pfu_only.where(
+        pfu_only.trt_func_code_gp.is_in([code])
+    ).exists_for_patient()
+
+    count_var["any_opa_" + code] = all_opa.where(
+        all_opa.trt_func_code_gp.is_in([code])
         & all_opa.appointment_date.is_on_or_after("2022-06-01")
     ).exists_for_patient()
 
