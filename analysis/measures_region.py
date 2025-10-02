@@ -99,19 +99,19 @@ for code in trt_func:
 for code in trt_func_gp:
 
     count_var["any_opa_" + code] = all_opa.where(
-        all_opa.treat_func_code_gp.is_in([code])
+        all_opa.trt_func_code_gp.is_in([code])
     ).exists_for_patient()
 
     count_var["any_pfu_" + code] = all_pfu.where(
-        all_pfu.treat_func_code_gp.is_in([code])
+        all_pfu.trt_func_code_gp.is_in([code])
     ).exists_for_patient()
 
     count_var["count_opa_" + code] = all_opa.where(
-        all_opa.treat_func_code_gp.is_in([code])
+        all_opa.trt_func_code_gp.is_in([code])
     ).opa_ident.count_distinct_for_patient()
     
     count_var["count_pfu_" + code] = all_pfu.where(
-        all_pfu.treat_func_code_gp.is_in([code])
+        all_pfu.trt_func_code_gp.is_in([code])
     ).opa_ident.count_distinct_for_patient()
 
 region = practice_registrations.for_patient_on(INTERVAL.start_date).practice_nuts1_region_name
