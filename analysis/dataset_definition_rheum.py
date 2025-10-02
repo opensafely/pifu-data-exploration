@@ -17,9 +17,15 @@ all_opa = opa.where(
         & opa.attendance_status.is_in(["5","6"])
     )
 
+# pfu only
+pfu_only = all_opa.where(
+        all_opa.outcome_of_attendance.is_in(["4","5"])
+        & all_opa.appointment_date.is_on_or_after("2022-06-01")
+    )
+
 from analysis.variable_function import opa_characteristics
 
-dataset = opa_characteristics(all_opa)
+dataset = opa_characteristics(all_opa, pfu_only)
 
 
 ######################################
