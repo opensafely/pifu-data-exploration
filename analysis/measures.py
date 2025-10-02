@@ -10,6 +10,7 @@ from ehrql.tables.tpp import (
     practice_registrations,
     opa)
 
+from codelists import *
 
 # OPA checks
 check_opa = opa.where(
@@ -49,13 +50,7 @@ count_pfu = all_pfu.opa_ident.count_distinct_for_patient()
 
 # By treatment specialty (only include top 10 most common groups reported in public statistics)
 # from here: https://v3.datadictionary.nhs.uk/web_site_content/supporting_information/main_specialty_and_treatment_function_codes_table.asp%40shownav%3D1.html
-all_opa.treatment_function_code2 = case(
-    when(all_opa.treatment_function_code.is_in(["110"])).then("110"),
-    when(all_opa.treatment_function_code.is_in(["120"])).then("120"),
-    when(all_opa.treatment_function_code.is_in(["330"])).then("330"),
-    when(all_opa.treatment_function_code.is_in(["410"])).then("410"),
-    when(all_opa.treatment_function_code.is_in(["101"])).then("101"),
-    when(all_opa.treatment_function_code.is_in(["502"])).then("502"),
+all_opa.trt_func_code_gp= case(
     when(all_opa.treatment_function_code.is_in(["180","190","191","192","200","300","301","302","303",
         "304","305","306","307","308","309","310","311","313","314","315","317","318","319","320","322",
         "323","324","325","326","327","328","329","330","331","333","335","340","341","342","343","344","345",
@@ -73,13 +68,7 @@ all_opa.treatment_function_code2 = case(
     otherwise=all_opa.treatment_function_code
 )
 
-all_pfu.treatment_function_code2 = case(
-    when(all_pfu.treatment_function_code.is_in(["110"])).then("110"),
-    when(all_pfu.treatment_function_code.is_in(["120"])).then("120"),
-    when(all_pfu.treatment_function_code.is_in(["330"])).then("330"),
-    when(all_pfu.treatment_function_code.is_in(["410"])).then("410"),
-    when(all_pfu.treatment_function_code.is_in(["101"])).then("101"),
-    when(all_pfu.treatment_function_code.is_in(["502"])).then("502"),
+all_pfu.trt_func_code_gp = case(
     when(all_pfu.treatment_function_code.is_in(["180","190","191","192","200","300","301","302","303",
         "304","305","306","307","308","309","310","311","313","314","315","317","318","319","320","322",
         "323","324","325","326","327","328","329","330","331","333","335","340","341","342","343","344","345",
@@ -98,26 +87,45 @@ all_pfu.treatment_function_code2 = case(
 )
 
 
-trt_func = ["110","120","330","410","101","502","MED","SUR","PAE","MEN","OTH"]
+trt_func = ["110","120","330","410","101","502"]
+trt_func_gp = ["MED","SUR","PAE","MEN","OTH"]
 
 count_var = {}
 
 for code in trt_func:
 
     count_var["any_opa_" + code] = all_opa.where(
-        all_opa.treatment_function_code2.is_in([code])
+        all_opa.treatment_function_code.is_in([code])
     ).exists_for_patient()
 
     count_var["any_pfu_" + code] = all_pfu.where(
-        all_pfu.treatment_function_code2.is_in([code])
+        all_pfu.treatment_function_code.is_in([code])
     ).exists_for_patient()
 
     count_var["count_opa_" + code] = all_opa.where(
-        all_opa.treatment_function_code2.is_in([code])
+        all_opa.treatment_function_code.is_in([code])
     ).opa_ident.count_distinct_for_patient()
     
     count_var["count_pfu_" + code] = all_pfu.where(
-        all_pfu.treatment_function_code2.is_in([code])
+        all_pfu.treatment_function_code.is_in([code])
+    ).opa_ident.count_distinct_for_patient()
+
+for code in trt_func_gp:
+
+    count_var["any_opa_" + code] = all_opa.where(
+        all_opa.trt_func_code_gp.is_in([code])
+    ).exists_for_patient()
+
+    count_var["any_pfu_" + code] = all_pfu.where(
+        all_pfu.trt_func_code_gp.is_in([code])
+    ).exists_for_patient()
+
+    count_var["count_opa_" + code] = all_opa.where(
+        all_opa.trt_func_code_gp.is_in([code])
+    ).opa_ident.count_distinct_for_patient()
+    
+    count_var["count_pfu_" + code] = all_pfu.where(
+        all_pfu.trt_func_code_gp.is_in([code])
     ).opa_ident.count_distinct_for_patient()
 
 
