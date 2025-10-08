@@ -3,7 +3,7 @@
 
 
 from ehrql import create_dataset, case, when, years, days, weeks, minimum_of
-from ehrql.tables.tpp import patients, practice_registrations, clinical_events, opa
+from ehrql.tables.tpp import patients, practice_registrations, clinical_events, opa, ons_deaths
 
 dataset = create_dataset()
 dataset.configure_dummy_data(population_size=9000)
@@ -149,7 +149,11 @@ def opa_characteristics(all_opa, pfu_only):
 
     dataset.deregister_date = practice_registrations.for_patient_on(dataset.first_opa_date).end_date
     
-    dataset.dod = patients.date_of_death
+    dataset.tpp_dod = patients.date_of_death
+
+    dataset.ons_dod = ons_deaths.date
+
+    dataset.dod = minimum_of(dataset.tpp_dod, dataset.ons_dod)
 
     dataset.fu_days = (minimum_of(dataset.dod, dataset.deregister_date, "2025-05-31") - dataset.first_pfu_date).days
 
