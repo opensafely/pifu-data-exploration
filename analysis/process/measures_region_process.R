@@ -16,7 +16,6 @@ rounding <- function(vars) {
 measures_region <- function(region) {
   
   measures <- read_csv(here::here("output", "measures", paste0("measures_", region, ".csv"))) %>%
-    subset(interval_start < as.Date("2025-06-01")) %>%
     select(!"ratio") %>%
     rename(month = interval_start) 
   
