@@ -48,14 +48,17 @@ write.csv(pfu, file = here::here("output", "processed", "ts_stp_pfu.csv"), row.n
 
 
 ggplot(opa) +
-  geom_line(aes(x = month, y = opa_rate, group = stp)) +
+  geom_line(aes(x = month, y = opa_rate, group = stp, colour = stp)) +
+  scale_colour_discrete(guide = "none") +
   theme_bw()
 
-ggsave(here::here("output", "processed", "stp_opa.png"))
+ggsave(here::here("output", "processed", "stp_opa.png"),
+       width = 12, height = 8, units = "cm")
 
 ggplot(pfu) +
-  geom_line(aes(x = month, y = pfu_rate, group = stp)) +
+  geom_line(aes(x = month, y = pfu_rate, group = stp, colour = stp)) +
+  scale_colour_discrete(guide = "none") +
   theme_bw()
 
-ggsave(here::here("output", "processed", "stp_pfu.png"))
-
+ggsave(here::here("output", "processed", "stp_pfu.png"),
+       width = 12, height = 8, units = "cm")

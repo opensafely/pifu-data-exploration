@@ -14,10 +14,9 @@ from codelists import *
 
 
 # For study
-# All OP visits that were attended
+# All OP visits 
 all_opa = opa.where(
         opa.appointment_date.is_on_or_between(INTERVAL.start_date, INTERVAL.end_date)
-        & opa.attendance_status.is_in(["5","6"])
     )
 
 # Any outpatient visit
@@ -41,7 +40,7 @@ denominator = (
     )
 
 measures.define_defaults(
-    intervals=months(48).starting_on("2022-01-01")
+    intervals=months(18).starting_on("2022-01-01")
     )
 
 ########################
