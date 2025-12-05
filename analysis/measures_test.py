@@ -14,19 +14,16 @@ from codelists import *
 
 
 # For study
-# All OP visits that were attended
+# All OP visits 
 all_opa = opa.where(
         opa.appointment_date.is_on_or_between(INTERVAL.start_date, INTERVAL.end_date)
-        & opa.attendance_status.is_in(["5","6"])
     )
 
 # Any outpatient visit - total and personalised 
 any_opa = all_opa.exists_for_patient()
 
-
 # Number of outpatient visits - total and personalised
 count_opa = all_opa.opa_ident.count_distinct_for_patient()
-
 
 ### Measures setup
 measures = Measures()
@@ -43,7 +40,7 @@ denominator = (
     )
 
 measures.define_defaults(
-    intervals=months(48).starting_on("2022-01-01")
+    intervals=months(18).starting_on("2022-01-01")
     )
 
 ########################
