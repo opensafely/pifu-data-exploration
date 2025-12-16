@@ -193,6 +193,14 @@ actions:
         timeseries1: output/processed/ts_stp*.csv
         figures: output/processed/stp*.png
 
+  time_series_rheum_stp:
+    run: r:latest analysis/process/measures_rheum_stp_process.R
+    needs: [measures_rheum_stp_cnt_opa, measures_rheum_stp_cnt_pfu, measures_rheum_stp_pat_opa, measures_rheum_stp_pat_pfu]
+    outputs:
+      moderately_sensitive:
+        timeseries1: output/processed/ts_rheum_stp*.csv
+        figures: output/processed/rheum_stp*.png
+
   visits:
     run: r:latest analysis/process/visit_stats.R
     needs: [generate_dataset_rheum]
