@@ -135,6 +135,30 @@ actions:
     outputs:
       moderately_sensitive:
         dataset: output/measures/measures_stp_pat_pfu.csv
+  
+  measures_rheum_stp_cnt_opa:
+    run: ehrql:v1 generate-measures analysis/measures_rheum_stp_cnt_opa.py --output output/measures/measures_rheum_stp_cnt_opa.csv 
+    outputs:
+      moderately_sensitive:
+        dataset: output/measures/measures_rheum_stp_cnt_opa.csv
+
+  measures_rheum_stp_cnt_pfu:
+    run: ehrql:v1 generate-measures analysis/measures_rheum_stp_cnt_pfu.py --output output/measures/measures_rheum_stp_cnt_pfu.csv 
+    outputs:
+      moderately_sensitive:
+        dataset: output/measures/measures_rheum_stp_cnt_pfu.csv
+
+  measures_rheum_stp_pat_opa:
+    run: ehrql:v1 generate-measures analysis/measures_rheum_stp_pat_opa.py --output output/measures/measures_rheum_stp_pat_opa.csv 
+    outputs:
+      moderately_sensitive:
+        dataset: output/measures/measures_rheum_stp_pat_opa.csv
+
+  measures_rheum_stp_pat_pfu:
+    run: ehrql:v1 generate-measures analysis/measures_rheum_stp_pat_pfu.py --output output/measures/measures_rheum_stp_pat_pfu.csv 
+    outputs:
+      moderately_sensitive:
+        dataset: output/measures/measures_rheum_stp_pat_pfu.csv
 
   table:
     run: r:latest analysis/process/pop_characteristics.R
