@@ -191,24 +191,4 @@ for code in trt_func:
     )
 
 
-for code in trt_func_gp:
-    measures.define_measure(
-        name=f"any_opa_{code}",
-        numerator=count_var["any_opa_" + code],
-        denominator = denominator,
-    )
-    measures.define_measure(
-        name=f"any_pfu_{code}",
-        numerator=count_var["any_pfu_" + code],
-        denominator = denominator & any_opa,
-    )
-    measures.define_measure(
-        name=f"count_opa_{code}",
-        numerator=count_var["count_opa_" + code],
-        denominator = denominator,
-    )
-    measures.define_measure(
-        name=f"count_pfu_{code}",
-        numerator=count_var["count_pfu_" + code],
-        denominator = denominator & any_opa,
-    )
+    
