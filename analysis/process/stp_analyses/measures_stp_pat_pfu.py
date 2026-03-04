@@ -14,7 +14,6 @@ from ehrql.tables.tpp import (
 all_opa = opa.where(
         opa.appointment_date.is_on_or_between(INTERVAL.start_date, INTERVAL.end_date)
         & opa.attendance_status.is_in(["5","6"])
-        & opa.treatment_function_code.is_in(["410"])
     )
 
 # All PIFU visits that were attended
@@ -22,7 +21,6 @@ all_pfu = opa.where(
         opa.appointment_date.is_on_or_between(INTERVAL.start_date, INTERVAL.end_date)
         & opa.attendance_status.is_in(["5","6"])
         & opa.outcome_of_attendance.is_in(["4","5"])
-        & opa.treatment_function_code.is_in(["410"])
     )
 
 # Any outpatient visit - total and personalised 
@@ -49,10 +47,12 @@ denominator = (
         & (practice_registrations.for_patient_on(INTERVAL.start_date).exists_for_patient())
     )
 
+
 measures.define_defaults(
-    intervals=months(48).starting_on("2022-01-01"),
+    intervals=months(53).starting_on("2021-08-01"),
     group_by={"stp": stp}
     )
+
 
 
 ##################
@@ -63,6 +63,8 @@ measures.define_measure(
     denominator=denominator & any_opa
     )
 
+
+###########################################
 
 
     

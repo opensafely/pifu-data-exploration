@@ -48,7 +48,7 @@ count_opa = all_opa.opa_ident.count_distinct_for_patient()
 count_pfu = pfu_only.opa_ident.count_distinct_for_patient()
 
 
-# By treatment specialty (only include top 10 most common groups reported in public statistics)
+# By treatment specialty 
 # from here: https://v3.datadictionary.nhs.uk/web_site_content/supporting_information/main_specialty_and_treatment_function_codes_table.asp%40shownav%3D1.html
 all_opa.trt_func_code_gp= case(
     when(all_opa.treatment_function_code.is_in(["180","190","191","192","200","300","301","302","303",
@@ -85,7 +85,6 @@ pfu_only.trt_func_code_gp = case(
         "661","662","663","670","673","675","677","800","811","812","822","840","920"])).then("OTH"),
     otherwise=pfu_only.treatment_function_code
 )
-
 
 trt_func = ["110","120","330","410","101","502"]
 trt_func_gp = ["MED","SUR","PAE","MEN","OTH"]
@@ -127,7 +126,6 @@ for code in trt_func_gp:
     count_var["count_pfu_" + code] = pfu_only.where(
         pfu_only.trt_func_code_gp.is_in([code])
     ).opa_ident.count_distinct_for_patient()
-
 
 
 ### Measures setup

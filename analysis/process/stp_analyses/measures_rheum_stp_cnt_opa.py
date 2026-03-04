@@ -1,6 +1,6 @@
 #################################################################
 # This code extracts monthly counts of people on personalised
-#   followup pathways, stratified by relevant characteristics
+#   folloup pathways, stratified by relevant characteristics
 #################################################################
 
 
@@ -50,17 +50,19 @@ denominator = (
     )
 
 measures.define_defaults(
-    intervals=months(48).starting_on("2022-01-01"),
+    intervals=months(53).starting_on("2021-08-01"),
     group_by={"stp": stp}
     )
 
 
 ##################
 
+
+# Number of people with an outpatient visit
 measures.define_measure(
-    name="count_pfu",
-    numerator=count_pfu,
-    denominator=denominator & any_opa
+    name="count_opa",
+    numerator=count_opa,
+    denominator=denominator
     )
 
 

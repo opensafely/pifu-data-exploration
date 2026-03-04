@@ -34,12 +34,6 @@ actions:
       moderately_sensitive:
         dataset: output/measures/measures.csv
 
-  measures_test:
-    run: ehrql:v1 generate-measures analysis/measures_test.py --output output/measures/measures_test.csv
-    outputs:
-      moderately_sensitive:
-        dataset: output/measures/measures_test.csv
-
   measures_london:
     run: ehrql:v1 generate-measures analysis/measures_region.py --output output/measures/measures_london.csv 
       -- 
@@ -112,53 +106,53 @@ actions:
       moderately_sensitive:
         dataset: output/measures/measures_southwest.csv
 
-  measures_stp_cnt_opa:
-    run: ehrql:v1 generate-measures analysis/measures_stp_cnt_opa.py --output output/measures/measures_stp_cnt_opa.csv 
-    outputs:
-      moderately_sensitive:
-        dataset: output/measures/measures_stp_cnt_opa.csv
+  # measures_stp_cnt_opa:
+  #   run: ehrql:v1 generate-measures analysis/stp_analyses/measures_stp_cnt_opa.py --output output/measures/measures_stp_cnt_opa.csv 
+  #   outputs:
+  #     moderately_sensitive:
+  #       dataset: output/measures/measures_stp_cnt_opa.csv
 
-  measures_stp_cnt_pfu:
-    run: ehrql:v1 generate-measures analysis/measures_stp_cnt_pfu.py --output output/measures/measures_stp_cnt_pfu.csv 
-    outputs:
-      moderately_sensitive:
-        dataset: output/measures/measures_stp_cnt_pfu.csv
+  # measures_stp_cnt_pfu:
+  #   run: ehrql:v1 generate-measures analysis/stp_analyses/measures_stp_cnt_pfu.py --output output/measures/measures_stp_cnt_pfu.csv 
+  #   outputs:
+  #     moderately_sensitive:
+  #       dataset: output/measures/measures_stp_cnt_pfu.csv
 
-  measures_stp_pat_opa:
-    run: ehrql:v1 generate-measures analysis/measures_stp_pat_opa.py --output output/measures/measures_stp_pat_opa.csv 
-    outputs:
-      moderately_sensitive:
-        dataset: output/measures/measures_stp_pat_opa.csv
+  # measures_stp_pat_opa:
+  #   run: ehrql:v1 generate-measures analysis/stp_analyses/measures_stp_pat_opa.py --output output/measures/measures_stp_pat_opa.csv 
+  #   outputs:
+  #     moderately_sensitive:
+  #       dataset: output/measures/measures_stp_pat_opa.csv
 
-  measures_stp_pat_pfu:
-    run: ehrql:v1 generate-measures analysis/measures_stp_pat_pfu.py --output output/measures/measures_stp_pat_pfu.csv 
-    outputs:
-      moderately_sensitive:
-        dataset: output/measures/measures_stp_pat_pfu.csv
+  # measures_stp_pat_pfu:
+  #   run: ehrql:v1 generate-measures analysis/stp_analyses/measures_stp_pat_pfu.py --output output/measures/measures_stp_pat_pfu.csv 
+  #   outputs:
+  #     moderately_sensitive:
+  #       dataset: output/measures/measures_stp_pat_pfu.csv
   
-  measures_rheum_stp_cnt_opa:
-    run: ehrql:v1 generate-measures analysis/measures_rheum_stp_cnt_opa.py --output output/measures/measures_rheum_stp_cnt_opa.csv 
-    outputs:
-      moderately_sensitive:
-        dataset: output/measures/measures_rheum_stp_cnt_opa.csv
+  # measures_rheum_stp_cnt_opa:
+  #   run: ehrql:v1 generate-measures analysis/stp_analyses/easures_rheum_stp_cnt_opa.py --output output/measures/measures_rheum_stp_cnt_opa.csv 
+  #   outputs:
+  #     moderately_sensitive:
+  #       dataset: output/measures/measures_rheum_stp_cnt_opa.csv
 
-  measures_rheum_stp_cnt_pfu:
-    run: ehrql:v1 generate-measures analysis/measures_rheum_stp_cnt_pfu.py --output output/measures/measures_rheum_stp_cnt_pfu.csv 
-    outputs:
-      moderately_sensitive:
-        dataset: output/measures/measures_rheum_stp_cnt_pfu.csv
+  # measures_rheum_stp_cnt_pfu:
+  #   run: ehrql:v1 generate-measures analysis/stp_analyses/measures_rheum_stp_cnt_pfu.py --output output/measures/measures_rheum_stp_cnt_pfu.csv 
+  #   outputs:
+  #     moderately_sensitive:
+  #       dataset: output/measures/measures_rheum_stp_cnt_pfu.csv
 
-  measures_rheum_stp_pat_opa:
-    run: ehrql:v1 generate-measures analysis/measures_rheum_stp_pat_opa.py --output output/measures/measures_rheum_stp_pat_opa.csv 
-    outputs:
-      moderately_sensitive:
-        dataset: output/measures/measures_rheum_stp_pat_opa.csv
+  # measures_rheum_stp_pat_opa:
+  #   run: ehrql:v1 generate-measures analysis/stp_analyses/measures_rheum_stp_pat_opa.py --output output/measures/measures_rheum_stp_pat_opa.csv 
+  #   outputs:
+  #     moderately_sensitive:
+  #       dataset: output/measures/measures_rheum_stp_pat_opa.csv
 
-  measures_rheum_stp_pat_pfu:
-    run: ehrql:v1 generate-measures analysis/measures_rheum_stp_pat_pfu.py --output output/measures/measures_rheum_stp_pat_pfu.csv 
-    outputs:
-      moderately_sensitive:
-        dataset: output/measures/measures_rheum_stp_pat_pfu.csv
+  # measures_rheum_stp_pat_pfu:
+  #   run: ehrql:v1 generate-measures analysis/stp_analyses/measures_rheum_stp_pat_pfu.py --output output/measures/measures_rheum_stp_pat_pfu.csv 
+  #   outputs:
+  #     moderately_sensitive:
+  #       dataset: output/measures/measures_rheum_stp_pat_pfu.csv
 
   table:
     run: r:latest analysis/process/pop_characteristics.R
@@ -185,21 +179,21 @@ actions:
         timeseries1: output/processed/ts_*.csv
         timeseries2: output/processed/ts_sp*.csv
 
-  time_series_stp:
-    run: r:latest analysis/process/measures_stp_process.R
-    needs: [measures_stp_cnt_opa, measures_stp_cnt_pfu, measures_stp_pat_opa, measures_stp_pat_pfu]
-    outputs:
-      moderately_sensitive:
-        timeseries1: output/processed/ts_stp*.csv
-        figures: output/processed/stp*.png
+  # time_series_stp:
+  #   run: r:latest analysis/process/measures_stp_process.R
+  #   needs: [measures_stp_cnt_opa, measures_stp_cnt_pfu, measures_stp_pat_opa, measures_stp_pat_pfu]
+  #   outputs:
+  #     moderately_sensitive:
+  #       timeseries1: output/processed/ts_stp*.csv
+  #       figures: output/processed/stp*.png
 
-  time_series_rheum_stp:
-    run: r:latest analysis/process/measures_rheum_stp_process.R
-    needs: [measures_rheum_stp_cnt_opa, measures_rheum_stp_cnt_pfu, measures_rheum_stp_pat_opa, measures_rheum_stp_pat_pfu]
-    outputs:
-      moderately_sensitive:
-        timeseries1: output/processed/ts_rheum_stp*.csv
-        figures: output/processed/rheum_stp*.png
+  # time_series_rheum_stp:
+  #   run: r:latest analysis/process/measures_rheum_stp_process.R
+  #   needs: [measures_rheum_stp_cnt_opa, measures_rheum_stp_cnt_pfu, measures_rheum_stp_pat_opa, measures_rheum_stp_pat_pfu]
+  #   outputs:
+  #     moderately_sensitive:
+  #       timeseries1: output/processed/ts_rheum_stp*.csv
+  #       figures: output/processed/rheum_stp*.png
 
   visits:
     run: r:latest analysis/process/visit_stats.R

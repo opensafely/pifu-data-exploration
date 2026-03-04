@@ -34,7 +34,7 @@ def opa_characteristics(all_opa, pfu_only):
     dataset.first_opa_date = first_opa.appointment_date
     dataset.any_opa = first_opa.exists_for_patient()
 
-    # By treatment specialty (only include top 10 most common groups reported in public statistics)
+    # By treatment specialty
     # from here: https://v3.datadictionary.nhs.uk/web_site_content/supporting_information/main_specialty_and_treatment_function_codes_table.asp%40shownav%3D1.html
     all_opa.trt_func_code_gp = case(
         when(all_opa.treatment_function_code.is_in(["180","190","191","192","200","300","301","302","303",
@@ -112,7 +112,6 @@ def opa_characteristics(all_opa, pfu_only):
 
 
     ###################################
-
 
     # demographics
     dataset.sex = patients.sex
