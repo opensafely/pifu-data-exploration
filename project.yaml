@@ -1,20 +1,20 @@
 version: '4.0'
 
 actions:
-  generate_dataset_explore:
-    run: ehrql:v1 generate-dataset analysis/dataset_definition_explore.py --output output/dataset_explore.csv.gz
-    outputs:
-      highly_sensitive:
-        dataset: output/dataset_explore.csv.gz
+  # generate_dataset_explore:
+  #   run: ehrql:v1 generate-dataset analysis/dataset_definition_explore.py --output output/dataset_explore.csv.gz
+  #   outputs:
+  #     highly_sensitive:
+  #       dataset: output/dataset_explore.csv.gz
 
-  table_explore:
-    run: r:latest analysis/process/data_exploration.R
-    needs: [generate_dataset_explore]
-    outputs:
-      moderately_sensitive:
-        table1: output/processed/table_explore.csv
-        #table2: output/processed/table_pfu_explore.csv
-        table3: output/processed/counts_explore.csv
+  # table_explore:
+  #   run: r:latest analysis/process/data_exploration.R
+  #   needs: [generate_dataset_explore]
+  #   outputs:
+  #     moderately_sensitive:
+  #       table1: output/processed/table_explore.csv
+  #       #table2: output/processed/table_pfu_explore.csv
+  #       table3: output/processed/counts_explore.csv
 
   generate_dataset:
     run: ehrql:v1 generate-dataset analysis/dataset_definition_everyone.py --output output/dataset_everyone.csv.gz
