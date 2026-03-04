@@ -12,14 +12,14 @@ dataset.configure_dummy_data(population_size=10000)
 
 # all outpatient visits - to measure before / after start of personalised follow-up
 all_opa = opa.where(
-        opa.appointment_date.is_on_or_after("2018-06-01")
+        opa.appointment_date.is_on_or_between("2022-06-01","2025-12-31")
         & opa.attendance_status.is_in(["5","6"])
     )
 
 # pfu only
 pfu_only = all_opa.where(
         all_opa.outcome_of_attendance.is_in(["4","5"])
-        & all_opa.appointment_date.is_on_or_after("2022-06-01")
+        & all_opa.appointment_date.is_on_or_between("2022-06-01","2025-12-31")
     )
 
 from analysis.variable_function import opa_characteristics
@@ -43,7 +43,6 @@ for code in trt_func:
 
     count_var["any_opa_" + code] = all_opa.where(
         all_opa.treatment_function_code.is_in([code])
-        & all_opa.appointment_date.is_on_or_after("2022-06-01")
     ).exists_for_patient()
 
     dataset.add_column(f"any_pfu_{code}", count_var["any_pfu_" + code])
@@ -58,7 +57,6 @@ for code in trt_func_gp:
 
     count_var["any_opa_" + code] = all_opa.where(
         all_opa.trt_func_code_gp.is_in([code])
-        & all_opa.appointment_date.is_on_or_after("2022-06-01")
     ).exists_for_patient()
 
     dataset.add_column(f"any_pfu_{code}", count_var["any_pfu_" + code])
