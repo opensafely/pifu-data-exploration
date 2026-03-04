@@ -47,19 +47,22 @@ denominator = (
         & (practice_registrations.for_patient_on(INTERVAL.start_date).exists_for_patient())
     )
 
+
 measures.define_defaults(
-    intervals=months(48).starting_on("2022-01-01"),
+    intervals=months(53).starting_on("2021-08-01"),
     group_by={"stp": stp}
     )
+
 
 
 ##################
 
 measures.define_measure(
-    name="patients_opa",
-    numerator=any_opa,
-    denominator=denominator
+    name="count_pfu",
+    numerator=count_pfu,
+    denominator=denominator & any_opa
     )
+
 
 
 ###########################################

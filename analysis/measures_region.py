@@ -133,7 +133,7 @@ denominator = (
     )
 
 measures.define_defaults(
-    intervals=months(48).starting_on("2022-01-01")
+    intervals=months(53).starting_on("2021-08-01")
     )
 
 

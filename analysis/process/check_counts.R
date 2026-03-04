@@ -31,7 +31,7 @@ count_everyone <- rbind(
   freq(any_pfu_410, "PFU rheumatology - full dataset")
 )
 
-# output fromn"generate_dataset_rheum"
+# output from "generate_dataset_rheum"
 df <- read_csv(here::here("output", "dataset_rheum.csv.gz")) 
 count_rheum <- rbind(
   freq(any_opa_410, "All rheumatology - rheum-only dataset"),
