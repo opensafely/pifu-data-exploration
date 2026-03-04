@@ -26,6 +26,23 @@ def opa_characteristics(all_opa, pfu_only):
     dataset.pfu_cat = first_pfu.outcome_of_attendance
     dataset.first_pfu_date = first_pfu.appointment_date
     dataset.first_pfu_year = dataset.first_pfu_date.year
+
+    dataset.any_pfu_2022 = pfu_only.where(
+        pfu_only.appointment_date.is_on_or_between("2022-01-01","2022-12-31")
+    ).exists_for_patient()
+
+    dataset.any_pfu_2023 = pfu_only.where(
+        pfu_only.appointment_date.is_on_or_between("2023-01-01","2023-12-31")
+    ).exists_for_patient()
+    
+    dataset.any_pfu_2024 = pfu_only.where(
+        pfu_only.appointment_date.is_on_or_between("2024-01-01","2024-12-31")
+    ).exists_for_patient()
+
+    dataset.any_pfu_2025 = pfu_only.where(
+        pfu_only.appointment_date.is_on_or_between("2025-01-01","2025-12-31")
+    ).exists_for_patient()
+
     dataset.any_pfu = dataset.first_pfu_date.is_not_null() 
     dataset.count_pfu = pfu_only.opa_ident.count_distinct_for_patient() # number of pfu records
     dataset.count_opa = all_opa.where(

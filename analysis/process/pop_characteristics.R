@@ -58,7 +58,11 @@ table <- rbind(
     freq(age_opa_group, "age"),
     freq(sex, "sex"),
     freq(region, "region"),
-    freq(any_pfu, "personalised follow-up")
+    freq(any_pfu, "personalised follow-up"),
+    freq(any_pfu_2022, "personalised follow-up 2022"),
+    freq(any_pfu_2023, "personalised follow-up 2023"),
+    freq(any_pfu_2024, "personalised follow-up 2024"),
+    freq(any_pfu_2025, "personalised follow-up 2025")
   ) %>%
   mutate(category = ifelse(is.na(category), "missing", category),
            who = "All outpatients")
@@ -82,7 +86,11 @@ table_rheum <- rbind(
   freq(age_opa_group, "age"),
   freq(sex, "sex"),
   freq(region, "region"),
-  freq(any_pfu, "personalised follow-up")
+  freq(any_pfu, "personalised follow-up"),
+  freq(any_pfu_2022, "personalised follow-up 2022"),
+  freq(any_pfu_2023, "personalised follow-up 2023"),
+  freq(any_pfu_2024, "personalised follow-up 2024"),
+  freq(any_pfu_2025, "personalised follow-up 2025")
 ) %>%
   mutate(count = rounding(count), total = rounding(total),
          category = ifelse(is.na(category), "missing", category),
@@ -107,6 +115,10 @@ table_pfu <- rbind(
   freq(sex, "sex"),
   freq(region, "region"),
   freq(first_pfu_year, "first PFU year"),
+  freq(any_pfu_2022, "personalised follow-up 2022"),
+  freq(any_pfu_2023, "personalised follow-up 2023"),
+  freq(any_pfu_2024, "personalised follow-up 2024"),
+  freq(any_pfu_2025, "personalised follow-up 2025"),
   freq(pfu_cat, "personalised followup category"),
   freq(count_pfu_gp, "number of pfu records")
 ) %>%
@@ -145,6 +157,10 @@ table_pfu_rheum <- rbind(
   freq(sex, "sex"),
   freq(region, "region"),
   freq(first_pfu_year, "first PFU year"),
+  freq(any_pfu_2022, "personalised follow-up 2022"),
+  freq(any_pfu_2023, "personalised follow-up 2023"),
+  freq(any_pfu_2024, "personalised follow-up 2024"),
+  freq(any_pfu_2025, "personalised follow-up 2025"),
   freq(pfu_cat, "personalised followup category")
 ) %>%
   mutate(pfu_all_count = count, pfu_all_total = total) %>%
@@ -157,6 +173,10 @@ table_pfu_moved_rheum <- rbind(
   freq(sex, "sex"),
   freq(region, "region"),
   freq(first_pfu_year, "first PFU year"),
+  freq(any_pfu_2022, "personalised follow-up 2022"),
+  freq(any_pfu_2023, "personalised follow-up 2023"),
+  freq(any_pfu_2024, "personalised follow-up 2024"),
+  freq(any_pfu_2025, "personalised follow-up 2025"),
   freq(pfu_cat, "personalised followup category"),
   freq(count_pfu_gp, "number of pfu records")
 ) %>%
@@ -170,6 +190,10 @@ table_pfu_discharged_rheum <- rbind(
   freq(sex, "sex"),
   freq(region, "region"),
   freq(first_pfu_year, "first PFU year"),
+  freq(any_pfu_2022, "personalised follow-up 2022"),
+  freq(any_pfu_2023, "personalised follow-up 2023"),
+  freq(any_pfu_2024, "personalised follow-up 2024"),
+  freq(any_pfu_2025, "personalised follow-up 2025"),
   freq(pfu_cat, "personalised followup category"),
   freq(count_pfu_gp, "number of pfu records")
 ) %>%
