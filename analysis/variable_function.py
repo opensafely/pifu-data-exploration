@@ -75,40 +75,40 @@ def opa_characteristics(all_opa, pfu_only):
 
     ###################################
 
-    # outpatient visits before start of personalised followup
-    dataset.before_3yr = all_opa.where(
-            all_opa.appointment_date.is_on_or_between(dataset.first_pfu_date - years(3), dataset.first_pfu_date - days(1))
-        ).opa_ident.count_distinct_for_patient()
+    # # outpatient visits before start of personalised followup
+    # dataset.before_3yr = all_opa.where(
+    #         all_opa.appointment_date.is_on_or_between(dataset.first_pfu_date - years(3), dataset.first_pfu_date - days(1))
+    #     ).opa_ident.count_distinct_for_patient()
 
-    dataset.before_2yr = all_opa.where(
-            all_opa.appointment_date.is_on_or_between(dataset.first_pfu_date - years(2), dataset.first_pfu_date - days(1))
-        ).opa_ident.count_distinct_for_patient()
+    # dataset.before_2yr = all_opa.where(
+    #         all_opa.appointment_date.is_on_or_between(dataset.first_pfu_date - years(2), dataset.first_pfu_date - days(1))
+    #     ).opa_ident.count_distinct_for_patient()
 
-    dataset.before_1yr = all_opa.where(
-            all_opa.appointment_date.is_on_or_between(dataset.first_pfu_date - years(1), dataset.first_pfu_date - days(1))
-        ).opa_ident.count_distinct_for_patient()
+    # dataset.before_1yr = all_opa.where(
+    #         all_opa.appointment_date.is_on_or_between(dataset.first_pfu_date - years(1), dataset.first_pfu_date - days(1))
+    #     ).opa_ident.count_distinct_for_patient()
     
-    # outpatient visits 1 year after start of personalised followup
-    dataset.after_1yr = all_opa.where(
-            all_opa.appointment_date.is_on_or_between(dataset.first_pfu_date + days(1), dataset.first_pfu_date + years(1))
-        ).opa_ident.count_distinct_for_patient()
+    # # outpatient visits 1 year after start of personalised followup
+    # dataset.after_1yr = all_opa.where(
+    #         all_opa.appointment_date.is_on_or_between(dataset.first_pfu_date + days(1), dataset.first_pfu_date + years(1))
+    #     ).opa_ident.count_distinct_for_patient()
 
 
-    # time from last / to next outpatient visit from start of personalised follow-up
-    dataset.before_last_date = all_opa.where(
-            all_opa.appointment_date.is_on_or_between(dataset.first_pfu_date - years(3), dataset.first_pfu_date - days(1))
-        ).sort_by(
-            all_opa.appointment_date
-        ).last_for_patient().appointment_date
+    # # time from last / to next outpatient visit from start of personalised follow-up
+    # dataset.before_last_date = all_opa.where(
+    #         all_opa.appointment_date.is_on_or_between(dataset.first_pfu_date - years(3), dataset.first_pfu_date - days(1))
+    #     ).sort_by(
+    #         all_opa.appointment_date
+    #     ).last_for_patient().appointment_date
 
-    dataset.after_next_date = all_opa.where(
-            all_opa.appointment_date.is_after(dataset.first_pfu_date)
-        ).sort_by(
-            all_opa.appointment_date
-        ).first_for_patient().appointment_date
+    # dataset.after_next_date = all_opa.where(
+    #         all_opa.appointment_date.is_after(dataset.first_pfu_date)
+    #     ).sort_by(
+    #         all_opa.appointment_date
+    #     ).first_for_patient().appointment_date
 
-    dataset.days_from_last_visit = (dataset.first_pfu_date - dataset.before_last_date).days
-    dataset.days_to_next_visit = (dataset.after_next_date - dataset.first_pfu_date).days
+    # dataset.days_from_last_visit = (dataset.first_pfu_date - dataset.before_last_date).days
+    # dataset.days_to_next_visit = (dataset.after_next_date - dataset.first_pfu_date).days
 
 
     ###################################

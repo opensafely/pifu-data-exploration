@@ -195,9 +195,9 @@ actions:
   #       timeseries1: output/processed/ts_rheum_stp*.csv
   #       figures: output/processed/rheum_stp*.png
 
-  visits:
-    run: r:latest analysis/process/visit_stats.R
-    needs: [generate_dataset_rheum]
-    outputs:
-      moderately_sensitive:
-        table: output/processed/visit_stats.csv
+  # visits:
+  #   run: r:latest analysis/process/visit_stats.R
+  #   needs: [generate_dataset_rheum]
+  #   outputs:
+  #     moderately_sensitive:
+  #       table: output/processed/visit_stats.csv
