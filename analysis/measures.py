@@ -4,7 +4,7 @@
 #################################################################
 
 
-from ehrql import months, INTERVAL, Measures, case, when
+from ehrql import months, INTERVAL, Measures, case, when, show
 from ehrql.tables.tpp import (
     patients, 
     practice_registrations,
@@ -143,7 +143,7 @@ denominator = (
     )
 
 measures.define_defaults(
-    intervals=months(41).starting_on("2022-01-01")
+    intervals=months(53).starting_on("2021-08-01")
     )
 
 ########################
