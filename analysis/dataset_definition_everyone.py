@@ -3,11 +3,11 @@
 #################################################################
 
 
-from ehrql import create_dataset, case, when, years, days, weeks
+from ehrql import create_dataset, case, when, years, days, weeks, show
 from ehrql.tables.tpp import patients, practice_registrations, clinical_events, opa
 
 dataset = create_dataset()
-dataset.configure_dummy_data(population_size=10000)
+dataset.configure_dummy_data(population_size=5000)
 
 
 # all outpatient visits - to measure before / after start of personalised follow-up

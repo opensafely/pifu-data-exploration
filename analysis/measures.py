@@ -4,7 +4,7 @@
 #################################################################
 
 
-from ehrql import months, INTERVAL, Measures, case, when
+from ehrql import months, INTERVAL, Measures, case, when, show
 from ehrql.tables.tpp import (
     patients, 
     practice_registrations,

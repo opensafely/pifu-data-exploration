@@ -3,7 +3,7 @@
 ####################################################################
 
 
-from ehrql import create_dataset, case, when, years, days, weeks, show, table_from_file
+from ehrql import create_dataset, case, when, years, days, weeks, show
 from ehrql.tables.tpp import patients, practice_registrations, clinical_events, opa
 
 dataset = create_dataset()
