@@ -1,4 +1,4 @@
-version: '4.0'
+version: '5.0'
 
 actions:
   # generate_dataset_explore:
@@ -8,7 +8,7 @@ actions:
   #       dataset: output/dataset_explore.csv.gz
 
   # table_explore:
-  #   run: r:latest analysis/process/data_exploration.R
+  #   run: r:v2 analysis/process/data_exploration.R
   #   needs: [generate_dataset_explore]
   #   outputs:
   #     moderately_sensitive:
@@ -113,7 +113,7 @@ actions:
         dataset: output/measures/measures_southwest.csv
 
   table:
-    run: r:latest analysis/process/pop_characteristics.R
+    run: r:v2 analysis/process/pop_characteristics.R
     needs: [generate_dataset, generate_dataset_rheum]
     outputs:
       moderately_sensitive:
@@ -122,7 +122,7 @@ actions:
         table3: output/processed/table_rheum.csv
 
   time_series:
-    run: r:latest analysis/process/measures_process.R
+    run: r:v2 analysis/process/measures_process.R
     needs: [measures]
     outputs:
       moderately_sensitive:
@@ -130,16 +130,16 @@ actions:
         timeseries2: output/processed/time_series_specialty.csv
   
   time_series_region:
-    run: r:latest analysis/process/measures_region_process.R
+    run: r:v2 analysis/process/measures_region_process.R
     needs: [measures_london, measures_east, measures_eastmidlands, measures_northeast, measures_northwest, measures_southeast, measures_southwest, measures_westmidlands, measures_yorkshire]
     outputs:
       moderately_sensitive:
         timeseries1: output/processed/ts_*.csv
         timeseries2: output/processed/ts_sp*.csv
 
-  # visits:
-  #   run: r:latest analysis/process/visit_stats.R
-  #   needs: [generate_dataset_rheum]
-  #   outputs:
-  #     moderately_sensitive:
-  #       table: output/processed/visit_stats.csv
+  visits:
+    run: r:v2 analysis/process/visit_stats.R
+    needs: [generate_dataset_rheum]
+    outputs:
+      moderately_sensitive:
+        table: output/processed/visit_stats.csv
