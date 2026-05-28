@@ -138,7 +138,11 @@ actions:
         timeseries2: output/processed/ts_sp*.csv
 
   visits:
+<<<<<<< HEAD
     run: r:v2 analysis/process/visit_stats.R
+=======
+    run: r:latest analysis/process/visit_stats.R
+>>>>>>> 542dab45dc3889e704c8580359557d6d2c65b859
     needs: [generate_dataset_rheum]
     outputs:
       moderately_sensitive:
