@@ -1,5 +1,3 @@
-
-
 from ehrql import create_dataset, case, when, years, days, weeks, show, Measures, INTERVAL, months, minimum_of
 from ehrql.tables.tpp import patients, practice_registrations, clinical_events, opa, ons_deaths
 from datetime import date
@@ -23,7 +21,7 @@ first_pfu_date = pfu_only.sort_by(
 
 tmp_start_date = "2000-01-01"
 
-all_opa.tmp_opa_date = tmp_start_date + days((all_opa.appointment_date - (first_pfu_date - days(720))).days)
+all_opa.tmp_opa_date = tmp_start_date + days((all_opa.appointment_date - first_pfu_date).days)
 
 count_opa = all_opa.where(
     all_opa.tmp_opa_date.is_during(INTERVAL)
@@ -41,7 +39,7 @@ reg_end_date = registrations.end_date
 end_date = minimum_of(reg_end_date, dod, date(2026, 6, 30))
 
 # Standardise end date relative to RTT start and end dates
-tmp_end_date = tmp_start_date + days((end_date - (first_pfu_date - days(720))).days)
+tmp_end_date = tmp_start_date + days((end_date - first_pfu_date).days)
 
 ### Measures setup
 measures = Measures()
@@ -60,7 +58,21 @@ denominator = (
 
 measures.define_defaults(
     intervals = [
+    (date(1999, 1, 30), date(1999, 2, 26)),
+    (date(1999, 2, 27), date(1999, 3, 26)),
+    (date(1999, 3, 27), date(1999, 4, 23)),
+    (date(1999, 4, 24), date(1999, 5, 21)),
+    (date(1999, 5, 22), date(1999, 6, 18)),
+    (date(1999, 6, 19), date(1999, 7, 16)),
+    (date(1999, 7, 17), date(1999, 8, 13)),
+    (date(1999, 8, 14), date(1999, 9, 10)),
+    (date(1999, 9, 11), date(1999, 10, 8)),
+    (date(1999, 10, 9), date(1999, 11, 5)),
+    (date(1999, 11, 6), date(1999, 12, 3)),
+    (date(1999, 12, 4), date(1999, 12, 31)),
+
     (date(2000, 1, 1), date(2000, 1, 28)),
+
     (date(2000, 1, 29), date(2000, 2, 25)),
     (date(2000, 2, 26), date(2000, 3, 24)),
     (date(2000, 3, 25), date(2000, 4, 21)),
@@ -71,18 +83,7 @@ measures.define_defaults(
     (date(2000, 8, 12), date(2000, 9, 8)),
     (date(2000, 9, 9), date(2000, 10, 6)),
     (date(2000, 10, 7), date(2000, 11, 3)),
-    (date(2000, 11, 4), date(2000, 12, 29)),
-    (date(2000, 12, 30), date(2001, 1, 26)),
-    (date(2001, 1, 27), date(2001, 2, 23)),
-    (date(2001, 2, 24), date(2001, 3, 23)),
-    (date(2001, 3, 24), date(2001, 4, 20)),
-    (date(2001, 4, 21), date(2001, 5, 18)),
-    (date(2001, 5, 19), date(2001, 6, 15)),
-    (date(2001, 6, 16), date(2001, 7, 13)),
-    (date(2001, 7, 14), date(2001, 8, 10)),
-    (date(2001, 8, 11), date(2001, 9, 7)),
-    (date(2001, 9, 8), date(2001, 10, 5)),
-    (date(2001, 10, 6), date(2001, 11, 2))
+    (date(2000, 11, 4), date(2000, 12, 29))
     ]
     )
 
