@@ -19,16 +19,20 @@ first_pfu_date = pfu_only.sort_by(
         pfu_only.appointment_date
     ).first_for_patient().appointment_date
 
+# b/c measures works with calendar dates, standardise first_pfu_date to 2000-01-01
 tmp_start_date = "2000-01-01"
 
+# standardise outpatient visit dates relative to 2000-01-01
 all_opa.tmp_opa_date = tmp_start_date + days((all_opa.appointment_date - first_pfu_date).days)
 
+# number of outpatient visits per interval
 count_opa = all_opa.where(
     all_opa.tmp_opa_date.is_during(INTERVAL)
     ).count_for_patient()
 
 dod = minimum_of(patients.date_of_death, ons_deaths.date)
 
+# registered for at least 6 months pre-PFU
 registrations = practice_registrations.spanning(
         first_pfu_date - days(182), first_pfu_date
     ).sort_by(
@@ -37,13 +41,15 @@ registrations = practice_registrations.spanning(
 
 reg_end_date = registrations.end_date
 end_date = minimum_of(reg_end_date, dod, date(2026, 6, 30))
+reg_start_date = registrations.start_date
 
-# Standardise end date relative to RTT start and end dates
+# standardise start / end date relative to 2000-01-01
 tmp_end_date = tmp_start_date + days((end_date - first_pfu_date).days)
+tmp_start_date = tmp_start_date + days((reg_start_date - first_pfu_date).days)
 
 ### Measures setup
 measures = Measures()
-measures.configure_disclosure_control(enabled=False)
+#measures.configure_disclosure_control(enabled=False)
 measures.configure_dummy_data(population_size=10000)
 
 denominator = (
@@ -54,36 +60,36 @@ denominator = (
     & first_pfu_date.is_on_or_before("2025-07-01") 
     & first_pfu_date.is_not_null()
     & (tmp_end_date.is_after(INTERVAL.end_date) | tmp_end_date.is_null())
+    & (tmp_start_date.is_on_or_before(INTERVAL.start_date))
 )
 
 measures.define_defaults(
     intervals = [
-    (date(1999, 1, 30), date(1999, 2, 26)),
-    (date(1999, 2, 27), date(1999, 3, 26)),
-    (date(1999, 3, 27), date(1999, 4, 23)),
-    (date(1999, 4, 24), date(1999, 5, 21)),
-    (date(1999, 5, 22), date(1999, 6, 18)),
-    (date(1999, 6, 19), date(1999, 7, 16)),
-    (date(1999, 7, 17), date(1999, 8, 13)),
-    (date(1999, 8, 14), date(1999, 9, 10)),
-    (date(1999, 9, 11), date(1999, 10, 8)),
-    (date(1999, 10, 9), date(1999, 11, 5)),
-    (date(1999, 11, 6), date(1999, 12, 3)),
-    (date(1999, 12, 4), date(1999, 12, 31)),
+    (date(2000,1,1) - days(28*12), date(2000,1,1) - days(28*11 - 1)),
+    (date(2000,1,1) - days(28*11), date(2000,1,1) - days(28*10 - 1)),
+    (date(2000,1,1) - days(28*10), date(2000,1,1) - days(28*9 - 1)),
+    (date(2000,1,1) - days(28*9), date(2000,1,1) - days(28*8 - 1)),
+    (date(2000,1,1) - days(28*8), date(2000,1,1) - days(28*7 - 1)),
+    (date(2000,1,1) - days(28*7), date(2000,1,1) - days(28*6 - 1)),
+    (date(2000,1,1) - days(28*6), date(2000,1,1) - days(28*5 - 1)),
+    (date(2000,1,1) - days(28*5), date(2000,1,1) - days(28*4 - 1)),
+    (date(2000,1,1) - days(28*4), date(2000,1,1) - days(28*3 - 1)),
+    (date(2000,1,1) - days(28*3), date(2000,1,1) - days(28*2 - 1)),
+    (date(2000,1,1) - days(28*2), date(2000,1,1) - days(28 - 1)),
+    (date(2000,1,1) - days(28), date(2000,1,1) - days(1)),
 
-    (date(2000, 1, 1), date(2000, 1, 28)),
-
-    (date(2000, 1, 29), date(2000, 2, 25)),
-    (date(2000, 2, 26), date(2000, 3, 24)),
-    (date(2000, 3, 25), date(2000, 4, 21)),
-    (date(2000, 4, 22), date(2000, 5, 19)),
-    (date(2000, 5, 20), date(2000, 6, 16)),
-    (date(2000, 6, 17), date(2000, 7, 14)),
-    (date(2000, 7, 15), date(2000, 8, 11)),
-    (date(2000, 8, 12), date(2000, 9, 8)),
-    (date(2000, 9, 9), date(2000, 10, 6)),
-    (date(2000, 10, 7), date(2000, 11, 3)),
-    (date(2000, 11, 4), date(2000, 12, 29))
+    (date(2000, 1, 1), date(2000, 1, 1) + days(28 - 1)),
+    (date(2000, 1, 1) + days(28), date(2000, 1, 1) + days(28*2 - 1)),
+    (date(2000, 1, 1) + days(28*2), date(2000, 1, 1) + days(28*3 - 1)),
+    (date(2000, 1, 1) + days(28*3), date(2000, 1, 1) + days(28*4 - 1)),
+    (date(2000, 1, 1) + days(28*4), date(2000, 1, 1) + days(28*5 - 1)),    
+    (date(2000, 1, 1) + days(28*5), date(2000, 1, 1) + days(28*6 - 1)),
+    (date(2000, 1, 1) + days(28*6), date(2000, 1, 1) + days(28*7 - 1)),
+    (date(2000, 1, 1) + days(28*7), date(2000, 1, 1) + days(28*8 - 1)),
+    (date(2000, 1, 1) + days(28*8), date(2000, 1, 1) + days(28*9 - 1)),
+    (date(2000, 1, 1) + days(28*9), date(2000, 1, 1) + days(28*10 - 1)),
+    (date(2000, 1, 1) + days(28*10), date(2000, 1, 1) + days(28*11 - 1)),
+    (date(2000, 1, 1) + days(28*11), date(2000, 1, 1) + days(28*12 - 1))
     ]
     )
 
