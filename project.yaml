@@ -143,3 +143,10 @@ actions:
     outputs:
       moderately_sensitive:
         table: output/processed/visit_stats.csv
+
+  opa_time:
+    run: r:v2 analysis/process/measures_time_process.R
+    needs: [measures_time]
+    outputs:
+      moderately_sensitive:
+        table: output/processed/outpatient_time.csv
