@@ -5,14 +5,14 @@ from datetime import date
 # all outpatient visits
 all_opa = opa.where(
         opa.appointment_date.is_on_or_after("2020-01-01")
-        & opa.treatment_function_code.is_in(["410"])
         & opa.attendance_status.is_in(["5","6"])
     )
 
+# all outpatient visits
+rheum_opa = all_opa.where(all_opa.treatment_function_code.is_in(["410"]))
+
 # pfu only
-pfu_only = all_opa.where(
-        all_opa.outcome_of_attendance.is_in(["4","5"])
-    )
+pfu_only = rheum_opa.where(rheum_opa.outcome_of_attendance.is_in(["4","5"]))
     
 # first personalised pathway record
 first_pfu_date = pfu_only.sort_by(
@@ -24,10 +24,14 @@ tmp_start_date = "2000-01-01"
 
 # standardise outpatient visit dates relative to 2000-01-01
 all_opa.tmp_opa_date = tmp_start_date + days((all_opa.appointment_date - first_pfu_date).days)
+rheum_opa.tmp_opa_date = tmp_start_date + days((rheum_opa.appointment_date - first_pfu_date).days)
 
 # number of outpatient visits per interval
 count_opa = all_opa.where(
     all_opa.tmp_opa_date.is_during(INTERVAL)
+    ).count_for_patient()
+count_rheum_opa = rheum_opa.where(
+    rheum_opa.tmp_opa_date.is_during(INTERVAL)
     ).count_for_patient()
 
 dod = minimum_of(patients.date_of_death, ons_deaths.date)
@@ -79,6 +83,7 @@ measures.define_defaults(
     (date(2000,1,1) - days(28), date(2000,1,1) - days(1)),
 
     (date(2000, 1, 1), date(2000, 1, 1) + days(28 - 1)),
+    
     (date(2000, 1, 1) + days(28), date(2000, 1, 1) + days(28*2 - 1)),
     (date(2000, 1, 1) + days(28*2), date(2000, 1, 1) + days(28*3 - 1)),
     (date(2000, 1, 1) + days(28*3), date(2000, 1, 1) + days(28*4 - 1)),
@@ -89,7 +94,8 @@ measures.define_defaults(
     (date(2000, 1, 1) + days(28*8), date(2000, 1, 1) + days(28*9 - 1)),
     (date(2000, 1, 1) + days(28*9), date(2000, 1, 1) + days(28*10 - 1)),
     (date(2000, 1, 1) + days(28*10), date(2000, 1, 1) + days(28*11 - 1)),
-    (date(2000, 1, 1) + days(28*11), date(2000, 1, 1) + days(28*12 - 1))
+    (date(2000, 1, 1) + days(28*11), date(2000, 1, 1) + days(28*12 - 1)),
+    (date(2000, 1, 1) + days(28*12), date(2000, 1, 1) + days(28*13 - 1))
     ]
     )
 
@@ -99,5 +105,11 @@ measures.define_defaults(
 measures.define_measure(
     name="opa_count",
     numerator=count_opa,
+    denominator=denominator,
+    )
+
+measures.define_measure(
+    name="opa_rheum_count",
+    numerator=count_rheum_opa,
     denominator=denominator,
     )
