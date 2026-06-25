@@ -21,96 +21,68 @@ actions:
     outputs:
       highly_sensitive:
         dataset: output/dataset_everyone.csv.gz
-  
+
   generate_dataset_rheum:
-    run: ehrql:v1 generate-dataset analysis/dataset_definition_rheum.py --output output/dataset_rheum.csv.gz
+    run: ehrql:v1 generate-dataset analysis/dataset_definition_specialty.py --output output/dataset_rheumatology.csv.gz
+      --
+      --trt_func_code 410
     outputs:
       highly_sensitive:
-        dataset: output/dataset_rheum.csv.gz
+        dataset: output/dataset_rheumatology.csv.gz
+  
+  generate_dataset_derm:
+    run: ehrql:v1 generate-dataset analysis/dataset_definition_specialty.py --output output/dataset_dermatology.csv.gz
+      --
+      --trt_func_code 330
+    outputs:
+      highly_sensitive:
+        dataset: output/dataset_dermatology.csv.gz
 
+  generate_dataset_gastro:
+    run: ehrql:v1 generate-dataset analysis/dataset_definition_specialty.py --output output/dataset_gastroenterology.csv.gz
+      --
+      --trt_func_code 301
+    outputs:
+      highly_sensitive:
+        dataset: output/dataset_gastroenterology.csv.gz
+
+  measures_rheum:
+    run: ehrql:v1 generate-measures analysis/measures_specialty.py --output output/measures/measures_rheum.csv
+      --
+      --trt_func_code 410
+    outputs:
+      moderately_sensitive:
+        dataset: output/measures/measures_rheum.csv
+  
   measures:
     run: ehrql:v1 generate-measures analysis/measures.py --output output/measures/measures.csv
     outputs:
       moderately_sensitive:
         dataset: output/measures/measures.csv
 
-  measures_time:
-    run: ehrql:v1 generate-measures analysis/measures_time.py --output output/measures/measures_time.csv
-    outputs:
-      moderately_sensitive:
-        dataset: output/measures/measures_time.csv
-
-  measures_london:
-    run: ehrql:v1 generate-measures analysis/measures_region.py --output output/measures/measures_london.csv 
-      -- 
-      --param_region London
-    outputs:
-      moderately_sensitive:
-        dataset: output/measures/measures_london.csv
-
-  measures_northeast:
-    run: ehrql:v1 generate-measures analysis/measures_region.py --output output/measures/measures_northeast.csv 
-      -- 
-      --param_region 'North East'
-    outputs:
-      moderately_sensitive:
-        dataset: output/measures/measures_northeast.csv
-
-  measures_northwest:
-    run: ehrql:v1 generate-measures analysis/measures_region.py --output output/measures/measures_northwest.csv 
-      -- 
-      --param_region 'North West'
-    outputs:
-      moderately_sensitive:
-        dataset: output/measures/measures_northwest.csv
-
-  measures_yorkshire:
-    run: ehrql:v1 generate-measures analysis/measures_region.py --output output/measures/measures_yorkshire.csv 
+  measures_time_rheum:
+    run: ehrql:v1 generate-measures analysis/measures_time.py --output output/measures/measures_time_rheum.csv
       --
-      --param_region 'Yorkshire and The Humber'
+      --trt_func_code 410
     outputs:
       moderately_sensitive:
-        dataset: output/measures/measures_yorkshire.csv
+        dataset: output/measures/measures_time_rheum.csv
 
-  measures_eastmidlands:
-    run: ehrql:v1 generate-measures analysis/measures_region.py --output output/measures/measures_eastmidlands.csv 
+  measures_time_gastro:
+    run: ehrql:v1 generate-measures analysis/measures_time.py --output output/measures/measures_time_gastro.csv
       --
-      --param_region 'East Midlands'
+      --trt_func_code 301
     outputs:
       moderately_sensitive:
-        dataset: output/measures/measures_eastmidlands.csv
+        dataset: output/measures/measures_time_gastro.csv
 
-  measures_westmidlands:
-    run: ehrql:v1 generate-measures analysis/measures_region.py --output output/measures/measures_westmidlands.csv 
-      -- 
-      --param_region 'West Midlands'
-    outputs:
-      moderately_sensitive:
-        dataset: output/measures/measures_westmidlands.csv
-
-  measures_east:
-    run: ehrql:v1 generate-measures analysis/measures_region.py --output output/measures/measures_east.csv 
+  measures_time_derm:
+    run: ehrql:v1 generate-measures analysis/measures_time.py --output output/measures/measures_time_derm.csv
       --
-      --param_region East
+      --trt_func_code 330
     outputs:
       moderately_sensitive:
-        dataset: output/measures/measures_east.csv
-
-  measures_southeast:
-    run: ehrql:v1 generate-measures analysis/measures_region.py --output output/measures/measures_southeast.csv 
-      --
-      --param_region 'South East'
-    outputs:
-      moderately_sensitive:
-        dataset: output/measures/measures_southeast.csv
-
-  measures_southwest:
-    run: ehrql:v1 generate-measures analysis/measures_region.py --output output/measures/measures_southwest.csv 
-      --
-      --param_region 'South West'
-    outputs:
-      moderately_sensitive:
-        dataset: output/measures/measures_southwest.csv
+        dataset: output/measures/measures_time_derm.csv
 
   table:
     run: r:v2 analysis/process/pop_characteristics.R
@@ -128,25 +100,10 @@ actions:
       moderately_sensitive:
         timeseries1: output/processed/time_series_overall.csv
         timeseries2: output/processed/time_series_specialty.csv
-  
-  time_series_region:
-    run: r:v2 analysis/process/measures_region_process.R
-    needs: [measures_london, measures_east, measures_eastmidlands, measures_northeast, measures_northwest, measures_southeast, measures_southwest, measures_westmidlands, measures_yorkshire]
-    outputs:
-      moderately_sensitive:
-        timeseries1: output/processed/ts_*.csv
-        timeseries2: output/processed/ts_sp*.csv
 
-  visits:
-    run: r:v2 analysis/process/visit_stats.R
-    needs: [generate_dataset_rheum]
-    outputs:
-      moderately_sensitive:
-        table: output/processed/visit_stats.csv
-
-  opa_time:
-    run: r:v2 analysis/process/measures_time_process.R
-    needs: [measures_time]
-    outputs:
-      moderately_sensitive:
-        table: output/processed/outpatient_time.csv
+ # opa_time:
+ #   run: r:v2 analysis/process/measures_time_process.R
+ #   needs: [measures_time]
+ #   outputs:
+ #     moderately_sensitive:
+ #       table: output/processed/outpatient_time.csv

@@ -28,45 +28,8 @@ dataset = opa_characteristics(all_opa, pfu_only)
 
 ###################################
 
-# By treatment specialty (only include most common groups reported in public statistics)
-trt_func = ["110","120","330","410","101","502"]
-trt_func_gp = ["MED","SUR","PAE","MEN","OTH"]
-
-count_var = {}
-
-for code in trt_func:
-
-    count_var["any_pfu_" + code] = pfu_only.where(
-        pfu_only.treatment_function_code.is_in([code])
-    ).exists_for_patient()
-
-    count_var["any_opa_" + code] = all_opa.where(
-        all_opa.treatment_function_code.is_in([code])
-    ).exists_for_patient()
-
-    dataset.add_column(f"any_pfu_{code}", count_var["any_pfu_" + code])
-    dataset.add_column(f"any_opa_{code}", count_var["any_opa_" + code])
-
-
-for code in trt_func_gp:
-
-    count_var["any_pfu_" + code] = pfu_only.where(
-        pfu_only.trt_func_code_gp.is_in([code])
-    ).exists_for_patient()
-
-    count_var["any_opa_" + code] = all_opa.where(
-        all_opa.trt_func_code_gp.is_in([code])
-    ).exists_for_patient()
-
-    dataset.add_column(f"any_pfu_{code}", count_var["any_pfu_" + code])
-    dataset.add_column(f"any_opa_{code}", count_var["any_opa_" + code])
-
-
-######################################
-
 # define population - everyone with an outpatient visit
 dataset.define_population(
-    #(dataset.age >= 18) 
     (dataset.age_opa >= 0)
     & (dataset.age_opa < 110) 
     & ((dataset.sex == "male") | (dataset.sex == "female"))
