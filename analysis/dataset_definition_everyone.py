@@ -2,9 +2,9 @@
 # This code extracts all people who had an outpatient visit
 #################################################################
 
-
 from ehrql import create_dataset, case, when, years, days, weeks, show
 from ehrql.tables.tpp import patients, practice_registrations, clinical_events, opa
+from analysis.variable_function import opa_characteristics
 
 dataset = create_dataset()
 dataset.configure_dummy_data(population_size=5000)
@@ -21,10 +21,7 @@ pfu_only = all_opa.where(
         & all_opa.appointment_date.is_on_or_between("2022-06-01","2025-12-31")
     )
 
-from analysis.variable_function import opa_characteristics
-
 dataset = opa_characteristics(all_opa, pfu_only)
-
 
 ###################################
 
