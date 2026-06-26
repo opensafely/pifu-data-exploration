@@ -1,7 +1,7 @@
 ####################################################################
 
 from ehrql import create_dataset, case, when, years, days, minimum_of
-from ehrql.tables.tpp import patients, practice_registrations, ons_deaths
+from ehrql.tables.tpp import patients, practice_registrations, ons_deaths, addresses
 
 dataset = create_dataset()
 dataset.configure_dummy_data(population_size=9000)
@@ -20,12 +20,11 @@ def opa_characteristics(all_opa, pfu_only):
             pfu_only.appointment_date
         ).first_for_patient() 
     
-    dataset.pfu_cat = first_pfu.outcome_of_attendance
     dataset.first_pfu_date = first_pfu.appointment_date
     dataset.first_pfu_year = dataset.first_pfu_date.year
     dataset.trt_func_code = first_opa.treatment_function_code
     dataset.pfu_trt_func_code = first_pfu.treatment_function_code
-    dataset.pfu_type = first_pfu.outcome_of_attendance
+    dataset.first_pfu_type = first_pfu.outcome_of_attendance
 
     dataset.any_pfu_2022 = pfu_only.where(
         pfu_only.appointment_date.is_on_or_between("2022-01-01","2022-12-31")
@@ -115,6 +114,7 @@ def opa_characteristics(all_opa, pfu_only):
     )
 
     dataset.region = practice_registrations.for_patient_on(dataset.first_opa_date).practice_nuts1_region_name
+    dataset.imd_decile = addresses.for_patient_on(dataset.first_opa_date).imd_decile
     dataset.deregister_date = practice_registrations.for_patient_on(dataset.first_opa_date).end_date
     dataset.tpp_dod = patients.date_of_death
     dataset.ons_dod = ons_deaths.date

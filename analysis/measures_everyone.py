@@ -26,48 +26,28 @@ pfu_only = opa.where(
         & opa.outcome_of_attendance.is_in(["4","5"])
     )
 
-any_opa = (
-    all_opa
-    .where(all_opa.treatment_function_code.is_in([trt_func_code]))
-    .exists_for_patient()
-)
-any_pfu = (
-    pfu_only
-    .where(pfu_only.treatment_function_code.is_in([trt_func_code]))
-    .exists_for_patient()
-)
+any_opa = all_opa.exists_for_patient()
+any_pfu = pfu_only.exists_for_patient()
 any_pfu4 = (
     pfu_only
-    .where(pfu_only.treatment_function_code.is_in([trt_func_code]))
     .where(pfu_only.outcome_of_attendance.is_in(["4"]))
     .exists_for_patient()
 )
 any_pfu5 = (
     pfu_only
-    .where(pfu_only.treatment_function_code.is_in([trt_func_code]))
     .where(pfu_only.outcome_of_attendance.is_in(["5"]))
     .exists_for_patient()
 )
 
-count_opa = (
-    all_opa
-    .where(all_opa.treatment_function_code.is_in([trt_func_code]))
-    .opa_ident.count_distinct_for_patient()
-)
-count_pfu = (
-    pfu_only
-    .where(pfu_only.treatment_function_code.is_in([trt_func_code]))
-    .opa_ident.count_distinct_for_patient()
-)
+count_opa = all_opa.opa_ident.count_distinct_for_patient()
+count_pfu = pfu_only.opa_ident.count_distinct_for_patient()
 count_pfu4 = (
     pfu_only
-    .where(pfu_only.treatment_function_code.is_in([trt_func_code]))
     .where(pfu_only.outcome_of_attendance.is_in(["4"]))
     .opa_ident.count_distinct_for_patient()
 )
 count_pfu5 = (
     pfu_only
-    .where(pfu_only.treatment_function_code.is_in([trt_func_code]))
     .where(pfu_only.outcome_of_attendance.is_in(["5"]))
     .opa_ident.count_distinct_for_patient()
 )

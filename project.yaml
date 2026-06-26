@@ -16,7 +16,7 @@ actions:
   #       #table2: output/processed/table_pfu_explore.csv
   #       table3: output/processed/counts_explore.csv
 
-  generate_dataset:
+  generate_dataset_everyone:
     run: ehrql:v1 generate-dataset analysis/dataset_definition_everyone.py --output output/dataset_everyone.csv.gz
     outputs:
       highly_sensitive:
@@ -46,6 +46,12 @@ actions:
       highly_sensitive:
         dataset: output/dataset_gastroenterology.csv.gz
 
+  measures_everyone:
+    run: ehrql:v1 generate-measures analysis/measures_everyone.py --output output/measures/measures_everyone.csv
+    outputs:
+      moderately_sensitive:
+        dataset: output/measures/measures_everyone.csv
+    
   measures_rheum:
     run: ehrql:v1 generate-measures analysis/measures_specialty.py --output output/measures/measures_rheum.csv
       --
@@ -54,14 +60,24 @@ actions:
       moderately_sensitive:
         dataset: output/measures/measures_rheum.csv
   
-  measures:
-    run: ehrql:v1 generate-measures analysis/measures.py --output output/measures/measures.csv
+  measures_gastro:
+    run: ehrql:v1 generate-measures analysis/measures_specialty.py --output output/measures/measures_gastro.csv
+      --
+      --trt_func_code 301
     outputs:
       moderately_sensitive:
-        dataset: output/measures/measures.csv
+        dataset: output/measures/measures_gastro.csv
+  
+  measures_derm:
+    run: ehrql:v1 generate-measures analysis/measures_specialty.py --output output/measures/measures_derm.csv
+      --
+      --trt_func_code 330
+    outputs:
+      moderately_sensitive:
+        dataset: output/measures/measures_derm.csv
 
   measures_time_rheum:
-    run: ehrql:v1 generate-measures analysis/measures_time.py --output output/measures/measures_time_rheum.csv
+    run: ehrql:v1 generate-measures analysis/measures_time_specialty.py --output output/measures/measures_time_rheum.csv
       --
       --trt_func_code 410
     outputs:
@@ -69,7 +85,7 @@ actions:
         dataset: output/measures/measures_time_rheum.csv
 
   measures_time_gastro:
-    run: ehrql:v1 generate-measures analysis/measures_time.py --output output/measures/measures_time_gastro.csv
+    run: ehrql:v1 generate-measures analysis/measures_time_specialty.py --output output/measures/measures_time_gastro.csv
       --
       --trt_func_code 301
     outputs:
@@ -77,33 +93,33 @@ actions:
         dataset: output/measures/measures_time_gastro.csv
 
   measures_time_derm:
-    run: ehrql:v1 generate-measures analysis/measures_time.py --output output/measures/measures_time_derm.csv
+    run: ehrql:v1 generate-measures analysis/measures_time_specialty.py --output output/measures/measures_time_derm.csv
       --
       --trt_func_code 330
     outputs:
       moderately_sensitive:
         dataset: output/measures/measures_time_derm.csv
 
-  table:
-    run: r:v2 analysis/process/pop_characteristics.R
-    needs: [generate_dataset, generate_dataset_rheum]
-    outputs:
-      moderately_sensitive:
-        table1: output/processed/table.csv
-        table2: output/processed/table_pfu.csv
-        table3: output/processed/table_rheum.csv
+  # table:
+  #   run: r:v2 analysis/process/pop_characteristics.R
+  #   needs: [generate_dataset_everyone, generate_dataset_rheum, generate_dataset_gastro, generate_dataset_derm]
+  #   outputs:
+  #     moderately_sensitive:
+  #       table1: output/processed/table.csv
+  #       table2: output/processed/table_pfu.csv
+  #       table3: output/processed/table_rheum.csv
 
-  time_series:
-    run: r:v2 analysis/process/measures_process.R
-    needs: [measures]
-    outputs:
-      moderately_sensitive:
-        timeseries1: output/processed/time_series_overall.csv
-        timeseries2: output/processed/time_series_specialty.csv
+  # time_series:
+  #   run: r:v2 analysis/process/measures_process.R
+  #   needs: [measures_everyone, measures_rheum, measures_gastro, measures_derm]
+  #   outputs:
+  #     moderately_sensitive:
+  #       timeseries1: output/processed/time_series_overall.csv
+  #       timeseries2: output/processed/time_series_specialty.csv
 
- # opa_time:
- #   run: r:v2 analysis/process/measures_time_process.R
- #   needs: [measures_time]
- #   outputs:
- #     moderately_sensitive:
- #       table: output/processed/outpatient_time.csv
+  # opa_time:
+  #   run: r:v2 analysis/process/measures_time_process.R
+  #   needs: [measures_time_rheum, measures_time_gastro, measure_time_derm]
+  #   outputs:
+  #     moderately_sensitive:
+  #       table: output/processed/outpatient_time.csv
