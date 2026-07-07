@@ -100,8 +100,8 @@ actions:
       moderately_sensitive:
         dataset: output/measures/measures_time_derm.csv
 
-  table:
-    run: r:v2 analysis/process/pop_characteristics.R
+  tables:
+    run: r:v2 analysis/process/tables.R
     needs: [generate_dataset_everyone, generate_dataset_rheum, generate_dataset_gastro, generate_dataset_derm]
     outputs:
       moderately_sensitive:
