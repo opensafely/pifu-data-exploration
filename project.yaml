@@ -107,17 +107,16 @@ actions:
       moderately_sensitive:
         table: output/processed/table*.csv
 
-  # time_series:
-  #   run: r:v2 analysis/process/measures_process.R
-  #   needs: [measures_everyone, measures_rheum, measures_gastro, measures_derm]
-  #   outputs:
-  #     moderately_sensitive:
-  #       timeseries1: output/processed/time_series_overall.csv
-  #       timeseries2: output/processed/time_series_specialty.csv
+  time_series:
+    run: r:v2 analysis/process/measures_process.R
+    needs: [measures_everyone, measures_rheum, measures_gastro, measures_derm]
+    outputs:
+      moderately_sensitive:
+        timeseries: output/processed/ts*.csv
 
-  # opa_time:
-  #   run: r:v2 analysis/process/measures_time_process.R
-  #   needs: [measures_time_rheum, measures_time_gastro, measure_time_derm]
-  #   outputs:
-  #     moderately_sensitive:
-  #       table: output/processed/outpatient_time.csv
+  opa_time:
+    run: r:v2 analysis/process/measures_time_process.R
+    needs: [measures_time_rheum, measures_time_gastro, measures_time_derm]
+    outputs:
+      moderately_sensitive:
+        table: output/processed/outpatient_time*.csv

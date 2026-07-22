@@ -13,41 +13,122 @@ rounding <- function(vars) {
 }
 
 
-measures <- read_csv(here::here("output", "measures", "measures.csv")) %>%
-  select(c("measure", "interval_start", "numerator", "denominator")) %>%
-  rename(month = interval_start) 
+prepare_measures <- function(file, output_file, region = FALSE) {
+  
+  data <- readr::read_csv(
+    here::here("output", "measures", file)
+  )
+  
+  if (region) {
+    
+    data <- data %>%
+      select(measure, interval_start, numerator, denominator, region) %>%
+      rename(month = interval_start) %>%
+      filter(!(measure %in% c(
+        "count_opa", "patients_opa",
+        "count_pfu", "patients_pfu"
+      ))) %>%
+      pivot_wider(
+        names_from = measure,
+        values_from = c(numerator, denominator)
+      ) %>%
+      rename(
+        denominator_pfu = denominator_patients_pfu_region,
+        denominator_opa = denominator_patients_opa_region,
+        count_opa = numerator_count_opa_region,
+        count_pfu = numerator_count_pfu_region
+      ) %>%
+      select(
+        -starts_with("numerator"),
+        -starts_with("denominator_count"),
+        -starts_with("denominator_patients")
+      ) %>%
+      mutate(region = tidyr::replace_na(region, "Missing"))
+    
+  } else {
+    
+    data <- data %>%
+      select(measure, interval_start, numerator, denominator) %>%
+      rename(month = interval_start) %>%
+      filter(measure %in% c(
+        "count_opa", "patients_opa",
+        "count_pfu", "patients_pfu",
+        "count_pfu4", "count_pfu5",
+        "patients_pfu4", "patients_pfu5"
+      )) %>%
+      pivot_wider(
+        names_from = measure,
+        values_from = c(numerator, denominator)
+      ) %>%
+      rename(
+        denominator_pfu = denominator_patients_pfu,
+        denominator_opa = denominator_patients_opa,
+        count_opa = numerator_count_opa,
+        count_pfu = numerator_count_pfu,
+        count_pfu4 = numerator_count_pfu4,
+        count_pfu5 = numerator_count_pfu5
+      ) %>%
+      select(
+        -starts_with("numerator"),
+        -starts_with("denominator_count"),
+        -starts_with("denominator_patients")
+      )
+  }
+  
+  # Save processed data
+  readr::write_csv(
+    data,
+    here::here("output", "processed", output_file)
+  )
+  
+  # Return processed data
+  return(data)
+}
 
-measures_wide <- measures %>%
-  select(!("denominator")) %>%
-  spread("measure", "numerator")
 
-measure_total_denom <- measures %>% 
-  subset(measure == "count_opa") %>%
-  select(c("denominator", "month")) %>%
-  rename(total_pop = denominator)
+measures_everyone <- prepare_measures(
+  file = "measures_everyone.csv",
+  output_file = "ts_everyone.csv"
+)
 
-measure_opa_denom <- measures %>% 
-  subset(measure == "count_pfu") %>%
-  select(c("denominator", "month")) %>%
-  rename(opa_pop = denominator)
+measures_region_everyone <- prepare_measures(
+  file = "measures_everyone.csv",
+  output_file = "ts_region_everyone.csv",
+  region = TRUE
+)
 
-all <- measures_wide %>% 
-  merge(measure_total_denom, all = T) %>%
-  merge(measure_opa_denom, all = T) %>%
-  replace(is.na(.), 0) %>%
-  mutate(across(c(starts_with(c("count","patients","total","any","opa"))), rounding)) 
+###
+measures_rheum <- prepare_measures(
+  file = "measures_rheum.csv",
+  output_file = "ts_rheum.csv"
+)
 
-overall <- all %>%
-  select(c("month", "total_pop", "total_opa", "count_opa", "count_pfu", "patients_opa", "patients_pfu"))
+measures_region_rheum <- prepare_measures(
+  file = "measures_rheum.csv",
+  output_file = "ts_region_rheum.csv",
+  region = TRUE
+)
 
-by_specialty <- all %>%
-  select(!c("count_opa", "count_pfu", "patients_opa", "patients_pfu", "total_pop", "total_opa", "opa_pop"))
+###
+measures_derm <- prepare_measures(
+  file = "measures_derm.csv",
+  output_file = "ts_rheum_processed.csv"
+)
 
+measures_region_derm <- prepare_measures(
+  file = "measures_derm.csv",
+  output_file = "ts_region_rheum.csv",
+  region = TRUE
+)
 
-# Save
-write.csv(overall, file = here::here("output", "processed", "time_series_overall.csv"), row.names = FALSE)
-write.csv(by_specialty, file = here::here("output", "processed", "time_series_specialty.csv"), row.names = FALSE)
+###
+measures_gastro <- prepare_measures(
+  file = "measures_gastro.csv",
+  output_file = "ts_gastro.csv"
+)
 
-
-###########################################################
-
+measures_region_gastro <- prepare_measures(
+  file = "measures_gastro.csv",
+  output_file = "ts_region_gastro.csv",
+  region = TRUE
+)
