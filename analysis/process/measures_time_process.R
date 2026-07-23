@@ -6,6 +6,12 @@ library('fs')
 # Create directory
 dir_create(here::here("output", "processed"), recurse = TRUE)
 
+# Rounding and redaction
+rounding <- function(vars) {
+  case_when(vars == 0 ~ 0,
+            vars > 7 ~ round(vars / 5) * 5)
+}
+
 
 measures_time_rheum <- read_csv(here::here("output", "measures", "measures_time_rheum.csv")) %>%
   select(measure, numerator, denominator, interval_start) %>%
@@ -18,7 +24,10 @@ measures_wide_rheum <- measures_time_rheum %>%
            time < 13 ~ "Pre-PFU",
            time == 13 ~ "PFU",
            time > 13 ~ "Post-PFU"
-         )) %>%
+         ),
+         numerator = rounding(numerator),
+         n_patients = rounding(n_patients)
+         ) %>%
   select(!interval_start)
 
 
@@ -39,7 +48,10 @@ measures_wide_derm <- measures_time_derm %>%
            time < 13 ~ "Pre-PFU",
            time == 13 ~ "PFU",
            time > 13 ~ "Post-PFU"
-         )) %>%
+         ),
+         numerator = rounding(numerator),
+         n_patients = rounding(n_patients)
+  ) %>%
   select(!interval_start)
 
 
@@ -62,7 +74,10 @@ measures_wide_gastro <- measures_time_gastro %>%
            time < 13 ~ "Pre-PFU",
            time == 13 ~ "PFU",
            time > 13 ~ "Post-PFU"
-         )) %>%
+         ),
+         numerator = rounding(numerator),
+         n_patients = rounding(n_patients)
+  ) %>%
   select(!interval_start)
 
 

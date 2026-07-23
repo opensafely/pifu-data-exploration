@@ -43,8 +43,8 @@ prepare_measures <- function(file, output_file, region = FALSE) {
         -starts_with("denominator_count"),
         -starts_with("denominator_patients")
       ) %>%
-      mutate(region = tidyr::replace_na(region, "Missing"))
-    
+      mutate(region = tidyr::replace_na(region, "Missing"),
+             across(starts_with(c("count_","denominator")), rounding))
   } else {
     
     data <- data %>%
@@ -72,7 +72,8 @@ prepare_measures <- function(file, output_file, region = FALSE) {
         -starts_with("numerator"),
         -starts_with("denominator_count"),
         -starts_with("denominator_patients")
-      )
+      ) %>%
+      mutate(across(starts_with(c("count_","denominator")), rounding))
   }
   
   # Save processed data
