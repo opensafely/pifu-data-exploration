@@ -25,8 +25,8 @@ measures_wide_rheum <- measures_time_rheum %>%
            time == 13 ~ "PFU",
            time > 13 ~ "Post-PFU"
          ),
-         numerator = rounding(numerator),
-         n_patients = rounding(n_patients)
+         numerator = rounding(as.numeric(numerator)),
+         n_patients = rounding(as.numeric(n_patients))
          ) %>%
   select(!interval_start)
 
@@ -49,8 +49,8 @@ measures_wide_derm <- measures_time_derm %>%
            time == 13 ~ "PFU",
            time > 13 ~ "Post-PFU"
          ),
-         numerator = rounding(numerator),
-         n_patients = rounding(n_patients)
+         numerator = rounding(as.numeric(numerator)),
+         n_patients = rounding(as.numeric(n_patients))
   ) %>%
   select(!interval_start)
 
@@ -75,8 +75,8 @@ measures_wide_gastro <- measures_time_gastro %>%
            time == 13 ~ "PFU",
            time > 13 ~ "Post-PFU"
          ),
-         numerator = rounding(numerator),
-         n_patients = rounding(n_patients)
+         numerator = rounding(as.numeric(numerator)),
+         n_patients = rounding(as.numeric(n_patients))
   ) %>%
   select(!interval_start)
 
