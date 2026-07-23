@@ -14,7 +14,7 @@ rounding <- function(vars) {
 
 
 measures_time_rheum <- read_csv(here::here("output", "measures", "measures_time_rheum.csv")) %>%
-  select(measure, numerator, denominator, interval_start) %>%
+  select(measure, numerator, denominator, interval_start, type) %>%
   rename(n_patients = denominator) %>%
   pivot_wider(names_from = measure, values_from = numerator) 
 
@@ -28,7 +28,6 @@ measures_wide_rheum <- measures_time_rheum %>%
          ) %>%
   select(!interval_start)
 
-
 # Save
 write.csv(measures_wide_rheum, file = here::here("output", "processed", "outpatient_time_rheum.csv"), row.names = FALSE)
 
@@ -36,7 +35,7 @@ write.csv(measures_wide_rheum, file = here::here("output", "processed", "outpati
 
 ##
 measures_time_derm <- read_csv(here::here("output", "measures", "measures_time_derm.csv")) %>%
-  select(measure, numerator, denominator, interval_start) %>%
+  select(measure, numerator, denominator, interval_start, type) %>%
   rename(n_patients = denominator) %>%
   pivot_wider(names_from = measure, values_from = numerator) 
 
@@ -50,7 +49,6 @@ measures_wide_derm <- measures_time_derm %>%
   ) %>%
   select(!interval_start)
 
-
 # Save
 write.csv(measures_wide_derm, file = here::here("output", "processed", "outpatient_time_derm.csv"), row.names = FALSE)
 
@@ -60,7 +58,7 @@ write.csv(measures_wide_derm, file = here::here("output", "processed", "outpatie
 
 ##
 measures_time_gastro <- read_csv(here::here("output", "measures", "measures_time_gastro.csv")) %>%
-  select(measure, numerator, denominator, interval_start) %>%
+  select(measure, numerator, denominator, interval_start, type) %>%
   rename(n_patients = denominator) %>%
   pivot_wider(names_from = measure, values_from = numerator) 
 

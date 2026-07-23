@@ -22,6 +22,7 @@ prepare_measures <- function(file, output_file, region = FALSE) {
   if (region) {
     
     data <- data %>%
+      subset(interval_start < as.Date("2025-12-01")) %>%
       select(measure, interval_start, numerator, denominator, region) %>%
       rename(month = interval_start) %>%
       filter(!(measure %in% c(
@@ -48,6 +49,7 @@ prepare_measures <- function(file, output_file, region = FALSE) {
   } else {
     
     data <- data %>%
+      subset(interval_start < as.Date("2025-12-01")) %>%
       select(measure, interval_start, numerator, denominator) %>%
       rename(month = interval_start) %>%
       filter(measure %in% c(
