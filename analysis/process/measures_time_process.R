@@ -28,7 +28,7 @@ process_measures_time <- function(specialty) {
         time < 16 ~ "Pre-PFU",
         time == 16 ~ "PFU",
         TRUE ~ "Post-PFU"),
-      rate = n_attendances / n_patients * 100) %>%
+      rate = numerator / denominator * 100) %>%
     rename(n_patients = denominator, n_attendances = numerator) %>%
     select(n_patients, n_attendances, time, period, type, group, specialist)
   
