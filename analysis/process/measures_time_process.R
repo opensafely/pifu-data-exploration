@@ -6,6 +6,7 @@ library(tidyr)
 library(here)
 library(glue)
 library(tidyverse)
+library(fs)
 
 # Create directory
 dir_create(here::here("output", "processed"), recurse = TRUE)
@@ -23,7 +24,6 @@ process_measures_time <- function(specialty) {
         "All"
       )
     ) %>%
-    arrange(interval_date) %>%
     mutate(
       time = dense_rank(interval_date),
       period = case_when(
@@ -49,3 +49,4 @@ process_measures_time <- function(specialty) {
 process_measures_time("rheum")
 process_measures_time("gastro")
 process_measures_time("derm")
+
