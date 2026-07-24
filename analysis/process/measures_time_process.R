@@ -1,81 +1,51 @@
 
 # Import libraries #
-library('tidyverse')
-library('fs')
+library(dplyr)
+library(readr)
+library(tidyr)
+library(here)
+library(glue)
+library(tidyverse)
 
 # Create directory
 dir_create(here::here("output", "processed"), recurse = TRUE)
 
-# Rounding and redaction
-rounding <- function(vars) {
-  case_when(vars == 0 ~ 0,
-            vars > 7 ~ round(vars / 5) * 5)
+process_measures_time <- function(specialty) {
+  
+  measures_time <- read_csv(
+    here("output", "measures", glue("measures_time_{specialty}.csv"))
+  ) %>%
+    mutate(
+      type = replace_na(type, "All"),
+      specialist = if_else(
+        measure %in% c("opa_spec_count", "opa_spec_count_type"),
+        "Specialist",
+        "All"
+      )
+    ) %>%
+    arrange(interval_date) %>%
+    mutate(
+      time = dense_rank(interval_date),
+      period = case_when(
+        time < 13 ~ "Pre-PFU",
+        time == 13 ~ "PFU",
+        TRUE ~ "Post-PFU"
+      )
+    ) %>%
+    rename(
+      n_patients = denominator,
+      n_attendances = numerator
+    ) %>%
+    select(n_patients, n_attendances, time, period, type, specialist)
+  
+  write_csv(
+    measures_time,
+    here("output", "processed", glue("outpatient_time_{specialty}.csv"))
+  )
+  
+  invisible(measures_time)
 }
 
-
-measures_time_rheum <- read_csv(here::here("output", "measures", "measures_time_rheum.csv")) %>%
-  select(measure, numerator, denominator, interval_start, type) %>%
-  rename(n_patients = denominator) %>%
-  pivot_wider(names_from = measure, values_from = numerator) 
-
-measures_wide_rheum <- measures_time_rheum %>%
-  mutate(time = seq_len(nrow(measures_time_rheum)),
-         period = case_when(
-           time < 13 ~ "Pre-PFU",
-           time == 13 ~ "PFU",
-           time > 13 ~ "Post-PFU"
-         )
-         ) %>%
-  select(!interval_start)
-
-# Save
-write.csv(measures_wide_rheum, file = here::here("output", "processed", "outpatient_time_rheum.csv"), row.names = FALSE)
-
-
-
-##
-measures_time_derm <- read_csv(here::here("output", "measures", "measures_time_derm.csv")) %>%
-  select(measure, numerator, denominator, interval_start, type) %>%
-  rename(n_patients = denominator) %>%
-  pivot_wider(names_from = measure, values_from = numerator) 
-
-measures_wide_derm <- measures_time_derm %>%
-  mutate(time = seq_len(nrow(measures_time_derm)),
-         period = case_when(
-           time < 13 ~ "Pre-PFU",
-           time == 13 ~ "PFU",
-           time > 13 ~ "Post-PFU"
-         )
-  ) %>%
-  select(!interval_start)
-
-# Save
-write.csv(measures_wide_derm, file = here::here("output", "processed", "outpatient_time_derm.csv"), row.names = FALSE)
-
-
-
-
-
-##
-measures_time_gastro <- read_csv(here::here("output", "measures", "measures_time_gastro.csv")) %>%
-  select(measure, numerator, denominator, interval_start, type) %>%
-  rename(n_patients = denominator) %>%
-  pivot_wider(names_from = measure, values_from = numerator) 
-
-measures_wide_gastro <- measures_time_gastro %>%
-  mutate(time = seq_len(nrow(measures_time_gastro)),
-         period = case_when(
-           time < 13 ~ "Pre-PFU",
-           time == 13 ~ "PFU",
-           time > 13 ~ "Post-PFU"
-         )
-  ) %>%
-  select(!interval_start)
-
-
-# Save
-write.csv(measures_wide_gastro, file = here::here("output", "processed", "outpatient_time_gastro.csv"), row.names = FALSE)
-
-
-###########################################################
-
+process_measures_time("rheum")
+process_measures_time("gastro")
+process_measures_time("derm")
