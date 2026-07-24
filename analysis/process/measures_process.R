@@ -115,12 +115,12 @@ measures_region_rheum <- prepare_measures(
 ###
 measures_derm <- prepare_measures(
   file = "measures_derm.csv",
-  output_file = "ts_rheum_processed.csv"
+  output_file = "ts_derm.csv"
 )
 
 measures_region_derm <- prepare_measures(
   file = "measures_derm.csv",
-  output_file = "ts_region_rheum.csv",
+  output_file = "ts_region_derm.csv",
   region = TRUE
 )
 
