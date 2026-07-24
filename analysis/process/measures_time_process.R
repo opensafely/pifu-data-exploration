@@ -24,7 +24,6 @@ process_measures_time <- function(specialty) {
         "All"
       )
     ) %>%
-    arrange(interval_date) %>%
     mutate(
       time = dense_rank(interval_date),
       period = case_when(
