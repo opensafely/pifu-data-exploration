@@ -17,20 +17,20 @@ process_measures_time <- function(specialty) {
     here("output", "measures", glue("measures_time_{specialty}.csv"))
     ) %>%
     mutate(
-      type = if_else(
+      group = if_else(
         measure %in% c("opa_spec_count_type","opa_count_type"),
         "By PFU type", "All PFU"),
       specialist = if_else(
         measure %in% c("opa_spec_count", "opa_spec_count_type"),
-        "Specialist","All attendances")
-      ) %>%
-    mutate(time = dense_rank(interval_start),
+        "Specialist","All attendances"),
+      time = dense_rank(interval_start),
       period = case_when(
-        time < 13 ~ "Pre-PFU",
-        time == 13 ~ "PFU",
-        TRUE ~ "Post-PFU")) %>%
+        time < 16 ~ "Pre-PFU",
+        time == 16 ~ "PFU",
+        TRUE ~ "Post-PFU"),
+      rate = n_attendances / n_patients * 100) %>%
     rename(n_patients = denominator, n_attendances = numerator) %>%
-    select(n_patients, n_attendances, time, period, type, specialist)
+    select(n_patients, n_attendances, time, period, type, group, specialist)
   
   write_csv(
     measures_time,

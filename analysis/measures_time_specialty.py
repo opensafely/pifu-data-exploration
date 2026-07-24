@@ -68,7 +68,7 @@ denominator = (
     & (patients.age_on(first_pfu_date) < 110)
     & ((patients.sex == "male") | (patients.sex == "female")) 
     & registrations.exists_for_patient()
-    & (first_pfu_date.is_on_or_after("2025-07-01"))
+    & (first_pfu_date.is_on_or_before("2025-07-01"))
     & first_pfu_date.is_not_null()
     & (tmp_end_date.is_after(INTERVAL.end_date) | tmp_end_date.is_null())
     & (tmp_start_date.is_on_or_before(INTERVAL.start_date))
