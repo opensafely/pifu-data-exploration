@@ -24,7 +24,7 @@ process_measures_time <- function(specialty) {
         measure %in% c("opa_spec_count", "opa_spec_count_type"),
         "Specialist","All attendances")
       ) %>%
-    mutate(time = dense_rank(interval_date),
+    mutate(time = dense_rank(interval_start),
       period = case_when(
         time < 13 ~ "Pre-PFU",
         time == 13 ~ "PFU",
