@@ -48,7 +48,7 @@ dod = minimum_of(patients.date_of_death, ons_deaths.date)
 registrations = (
     practice_registrations
     .spanning(first_pfu_date - days(182), first_pfu_date)
-    .sort_by(practice_registrations.end_date)
+    .sort_by(practice_registrations.start_date)
     .last_for_patient()
 )
 reg_end_date = registrations.end_date
@@ -57,7 +57,7 @@ reg_start_date = registrations.start_date
 
 # standardise start / end date relative to 2000-01-01
 tmp_end_date = tmp_start_date + days((end_date - first_pfu_date).days)
-tmp_start_date = tmp_start_date + days((reg_start_date - first_pfu_date).days)
+tmp_start_date = tmp_start_date - days((first_pfu_date - reg_start_date).days)
 
 ### Measures setup
 measures = Measures()
@@ -70,7 +70,7 @@ denominator = (
     & registrations.exists_for_patient()
     & (first_pfu_date.is_on_or_before("2025-07-01"))
     & first_pfu_date.is_not_null()
-    & (tmp_end_date.is_after(INTERVAL.end_date) | tmp_end_date.is_null())
+    & (tmp_end_date.is_after(INTERVAL.end_date))
     & (tmp_start_date.is_on_or_before(INTERVAL.start_date))
 )
 
