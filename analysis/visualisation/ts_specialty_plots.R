@@ -1,7 +1,13 @@
 library(tidyverse)
-library(dplyr)
-library(tidyr)
 library(readr)
+library(dplyr)
+library(purrr)
+library(viridis)
+library(here)
+library(fs)
+
+# Create directory
+dir_create(here::here("output", "figures"), recurse = TRUE)
 
 prep_ts <- function(file, specialty_name) {
   read_csv(file) %>%
@@ -30,9 +36,9 @@ prep_ts <- function(file, specialty_name) {
 }
 
 ts_all <- bind_rows(
-  prep_ts("C:/Users/aschaffer/OneDrive - Nexus365/Documents/GitHub/pifu-data-exploration/output/ts_rheum.csv", "Rheumatology"),
-  prep_ts("C:/Users/aschaffer/OneDrive - Nexus365/Documents/GitHub/pifu-data-exploration/output/ts_derm.csv", "Dermatology"),
-  prep_ts("C:/Users/aschaffer/OneDrive - Nexus365/Documents/GitHub/pifu-data-exploration/output/ts_gastro.csv", "Gastroenterology")
+  prep_ts(here::here("output","processed","ts_rheum.csv"), "Rheumatology"),
+  prep_ts(here::here("output","processed","ts_derm.csv"), "Dermatology"),
+  prep_ts(here::here("output","processed","ts_gastro.csv"), "Gastroenterology")
 )
 
 ts_all$specialty <- factor(ts_all$specialty, levels = c("Rheumatology", 
@@ -42,7 +48,6 @@ ts_all$specialty <- factor(ts_all$specialty, levels = c("Rheumatology",
 ts_all$pfu_type <- factor(ts_all$pfu_type, levels = c("All", "Discharged", "Moved"),
 labels = c("All personalised follow-up","Discharged to personalised follow-up pathway",
                                                     "Moved to personalised follow-up pathway"))
-
 
 
 ggplot(ts_all) +
@@ -63,19 +68,6 @@ ggplot(ts_all) +
         legend.text = element_text(size = 10),
         legend.position = "bottom")
 
+ggsave(here("output", "figures", "ts_specialty_plot.png"), 
+       dpi = 300, units = "in", width = 11, height = 4)
 
-ggplot(subset(ts_all, pfu_type != "All")) +
-  geom_line(aes(x = month, y = pfu_rate, col = pfu_type)) +
-  scale_colour_manual(values = c("dodgerblue3","maroon")) +
-  xlab("Month") + 
-  ylab("Personalised follow-up episodes\nper 10,000 outpatient attendances") +
- # facet_wrap(~ specialty) +
-  theme_bw() +
-  theme(text = element_text(size = 10),
-        panel.grid.major.x = element_blank(),
-        panel.grid.minor.x = element_blank(),
-        axis.text.x = element_text(size = 10, angle = 45, hjust=1),
-        axis.text.y = element_text(size = 10),
-        legend.title = element_blank(),
-        strip.text = element_text(hjust = 0, size = 10),
-        strip.background = element_blank())

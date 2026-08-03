@@ -3,35 +3,24 @@ library(readr)
 library(dplyr)
 library(purrr)
 library(viridis)
+library(here)
+library(fs)
 
-ts_overall <- read_csv("C:/Users/aschaffer/OneDrive - Nexus365/Documents/GitHub/pifu-data-exploration/output/ts_everyone.csv") %>%
-  mutate(pfu_rate = if_else(count_pfu == 0, NA, count_pfu / count_opa *10000),
+
+# Create directory
+dir_create(here::here("output", "figures"), recurse = TRUE)
+
+ts_overall <- read_csv(here::here("output","processed","ts_everyone.csv")) %>%
+  mutate(pfu_rate = if_else(count_pfu == 0, NA_real_, count_pfu / count_opa *10000),
          region = "England") %>%
   subset(month >= as.Date("2022-01-01") &
            month < as.Date("2025-12-01")) %>%
   select(month, pfu_rate, region)
-  
 
-regions <- c(
-  "northeast", "northwest",
-  "southeast", "southwest",
-  "london", "yorkshire", "east",
-  "westmidlands", "eastmidlands"
-)
-
-path <- "C:/Users/aschaffer/OneDrive - Nexus365/Documents/GitHub/pifu-data-exploration/output"
-
-ts_regions <- map_dfr(regions, \(region) {
-  read_csv(file.path(path, paste0("ts_", region, ".csv"))) %>%
-    mutate(
-      region = region,
-      pfu_rate = if_else(count_pfu == 0, NA, count_pfu / count_opa * 10000)
-    ) %>%
-    filter(month >= as.Date("2022-01-01") &
-             month < as.Date("2025-12-01")
-    ) %>%
-    select(month, region, pfu_rate)
-})
+ts_regions <- read_csv(here::here("output","processed","ts_region_everyone.csv")) %>%
+  mutate(pfu_rate = if_else(count_pfu == 0, NA, count_pfu / count_opa * 10000)) %>%
+  filter(month >= as.Date("2022-01-01") & month < as.Date("2025-12-01")) %>%
+  select(month, region, pfu_rate)
 
 ts_regions <- rbind(ts_regions, ts_overall)
 
@@ -42,7 +31,7 @@ ts_regions$region <- factor(ts_regions$region,
                             labels = c("All of England","East","East Midlands","London",
                                        "Northeast","Northwest","Southeast",
                                        "Southwest","West Midlands","Yorkshire & the Humber")
-                            )
+)
 
 facet_regions <- unique(ts_regions$region)
 
@@ -88,4 +77,6 @@ ggplot(plot_df, aes(x = month, y = pfu_rate, group = region)) +
         strip.background = element_blank(),
         strip.text = element_text(hjust = 0))
 
+ggsave(here("output", "figures", "ts_plot.png"), 
+       dpi = 300, units = "in", width = 11, height = 6.5)
 
