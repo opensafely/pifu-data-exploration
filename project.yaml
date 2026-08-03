@@ -120,3 +120,25 @@ actions:
     outputs:
       moderately_sensitive:
         table: output/processed/outpatient_time*.csv
+ 
+  ts_plots:
+    run: r:v2 analysis/visualisation/ts_plots.R
+    needs: [time_series]
+    outputs:
+      moderately_sensitive:
+        fig: output/figures/ts_plot.png
+
+  ts_specialty_plots:
+    run: r:v2 analysis/visualisation/ts_specialty_plots.R
+    needs: [time_series]
+    outputs:
+      moderately_sensitive:
+        fig: output/figures/ts_specialty_plot.png
+
+  opa_time_plots:
+    run: r:v2 analysis/visualisation/opa_time_plots.R
+    needs: [opa_time]
+    outputs:
+      moderately_sensitive:
+        fig: output/figures/opa*.png
+ 
