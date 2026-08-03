@@ -6,6 +6,9 @@ library(viridis)
 library(here)
 library(fs)
 
+# Create directory
+dir_create(here::here("output", "figures"), recurse = TRUE)
+
 time_rheum <- read_csv(here::here("output","processed","outpatient_time_rheum.csv")) %>%
   mutate(time_since = time-16, specialty = "Rheumatology",
          opa_rate = n_attendances / n_patients * 100,
