@@ -129,9 +129,13 @@ ggsave(here::here("output", "figures", "opa_gastro_zero.png"), dpi = 300, units 
 
 time_plot_patients <- function(df){
   
-  ggplot(df, aes(x=time_since, y = n_patients)) +
+  ggplot(
+      subset(df, group == "All PFU" & specialist == "All attendances"), 
+      aes(x=time_since, y = n_patients)
+      ) +
     geom_bar(stat = "identity", fill = "goldenrod2") +
     geom_vline(xintercept = 0, linetype = "longdash", col = "gray80", width = 2) +
+    facet_wrap(~ group) +
     scale_y_continuous(limits = c(0,7000)) + 
     scale_x_continuous(breaks = c(-12, -9, -6, -3, 0, 3, 6, 9, 12)) +
     ylab("No. eligible people") + xlab("4-week period relative to first personalised follow-up")+
