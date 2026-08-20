@@ -66,7 +66,7 @@ denominator = (
     )
 
 measures.define_defaults(
-    intervals=months(60).starting_on("2021-07-01")
+    intervals=months(60).starting_on("2022-01-01")
     )
 
 ###################################################
