@@ -13,7 +13,7 @@ trt_func_code = get_parameter("trt_func_code", type=str)
 
 # outpatient visits 
 all_opa = opa.where(
-        opa.appointment_date.is_on_or_between("2022-06-01","2025-12-31")
+        opa.appointment_date.is_on_or_between("2022-04-01","2025-12-31")
         & opa.treatment_function_code.is_in([trt_func_code])
         & opa.attendance_status.is_in(["5","6"])
     )
@@ -21,7 +21,7 @@ all_opa = opa.where(
 # pfu only
 pfu_only = all_opa.where(
         all_opa.outcome_of_attendance.is_in(["4","5"])
-        & all_opa.appointment_date.is_on_or_between("2022-06-01","2025-12-31")
+        & all_opa.appointment_date.is_on_or_between("2022-04-01","2025-12-31")
     )
 
 dataset = opa_characteristics(all_opa, pfu_only)

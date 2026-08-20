@@ -15,12 +15,10 @@ all_opa = opa.where(
         & opa.attendance_status.is_in(["5","6"])
     )
 
-first_opa = all_opa.sort_by(opa.appointment_date).first_for_patient()
-all_trt_func = first_opa.treatment_function_code
+ortho_opa = all_opa.where(all_opa.treatment_function_code.is_in(["110"]))
 
 spec_opa = all_opa.where(all_opa.treatment_function_code.is_in([trt_func_code]))
 pfu_only = spec_opa.where(spec_opa.outcome_of_attendance.is_in(["4","5"]))
-
 first_pfu = pfu_only.sort_by(pfu_only.appointment_date).first_for_patient()
 first_pfu_date = first_pfu.appointment_date
 first_pfu_type = first_pfu.outcome_of_attendance
@@ -29,12 +27,14 @@ first_pfu_type = first_pfu.outcome_of_attendance
 tmp_start_date = "2000-01-01"
 
 # standardise outpatient visit dates relative to 2000-01-01
-all_opa.tmp_opa_date = tmp_start_date + days((all_opa.appointment_date - first_pfu_date).days)
+#all_opa.tmp_opa_date = tmp_start_date + days((all_opa.appointment_date - first_pfu_date).days)
+#spec_opa.tmp_opa_date = tmp_start_date + days((spec_opa.appointment_date - first_pfu_date).days)
+ortho_opa.tmp_ortho_date = tmp_start_date + days((ortho_opa.appointment_date - first_pfu_date).days)
 
 # number of outpatient visits per interval
-count_opa = (
-    all_opa
-    .where(all_opa.tmp_opa_date.is_during(INTERVAL))
+count_ortho_opa = (
+    ortho_opa
+    .where(ortho_opa.tmp_ortho_date.is_during(INTERVAL))
     .count_for_patient()
 )
 
@@ -57,7 +57,7 @@ tmp_start_date = tmp_start_date - days((first_pfu_date - reg_start_date).days)
 
 ### Measures setup
 measures = Measures()
-measures.configure_dummy_data(population_size=10000)
+measures.configure_dummy_data(population_size=1000)
 
 denominator = (
     (patients.age_on(first_pfu_date) >= 0)
@@ -72,13 +72,26 @@ denominator = (
 
 measures.define_defaults(
     intervals = [
+    (date(2000,1,1) - days(28*12), date(2000,1,1) - days(28*11 - 1)),
+    (date(2000,1,1) - days(28*11), date(2000,1,1) - days(28*10 - 1)),
+    (date(2000,1,1) - days(28*10), date(2000,1,1) - days(28*9 - 1)),
+    (date(2000,1,1) - days(28*9), date(2000,1,1) - days(28*8 - 1)),
+    (date(2000,1,1) - days(28*8), date(2000,1,1) - days(28*7 - 1)),
+    (date(2000,1,1) - days(28*7), date(2000,1,1) - days(28*6 - 1)),
+    (date(2000,1,1) - days(28*6), date(2000,1,1) - days(28*5 - 1)),
     (date(2000,1,1) - days(28*5), date(2000,1,1) - days(28*4 - 1)),
     (date(2000,1,1) - days(28*4), date(2000,1,1) - days(28*3 - 1)),
     (date(2000,1,1) - days(28*3), date(2000,1,1) - days(28*2 - 1)),
     (date(2000,1,1) - days(28*2), date(2000,1,1) - days(28 - 1)),
     (date(2000,1,1) - days(28), date(2000,1,1) - days(1)),
 
-    (date(2000, 1, 1), date(2000, 1, 1) + days(28 - 1))
+    (date(2000, 1, 1), date(2000, 1, 1) + days(28 - 1)),
+    
+    (date(2000, 1, 1) + days(28), date(2000, 1, 1) + days(28*2 - 1)),
+    (date(2000, 1, 1) + days(28*2), date(2000, 1, 1) + days(28*3 - 1)),
+    (date(2000, 1, 1) + days(28*3), date(2000, 1, 1) + days(28*4 - 1)),
+    (date(2000, 1, 1) + days(28*4), date(2000, 1, 1) + days(28*5 - 1)),    
+    (date(2000, 1, 1) + days(28*5), date(2000, 1, 1) + days(28*6 - 1)),
     ]
     )
 
@@ -87,10 +100,6 @@ measures.define_defaults(
 # Total outpatient visits
 measures.define_measure(
     name="opa_count",
-    numerator=count_opa,
-    denominator=denominator,
-    group_by={
-        "trt_func": all_trt_func,
-        "type": first_pfu_type,
-              }
+    numerator=count_ortho_opa,
+    denominator=denominator
     )
