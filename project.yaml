@@ -100,6 +100,14 @@ actions:
       moderately_sensitive:
         dataset: output/measures/measures_time_derm.csv
 
+  measures_time_rheum_checks:
+    run: ehrql:v1 generate-measures analysis/measures_time_checks.py --output output/measures/measures_time_rheum_checks.csv
+      --
+      --trt_func_code 410
+    outputs:
+      moderately_sensitive:
+        dataset: output/measures/measures_time_rheum_checks.csv
+
   tables:
     run: r:v2 analysis/process/tables.R
     needs: [generate_dataset_everyone, generate_dataset_rheum, generate_dataset_gastro, generate_dataset_derm]

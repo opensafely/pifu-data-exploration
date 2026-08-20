@@ -139,3 +139,29 @@ measures.define_measure(
     denominator=denominator & any_opa,
     group_by={"region": region}
     )
+
+
+measures.define_measure(
+    name="count_pfu4_region",
+    numerator=count_pfu4,
+    denominator=denominator & any_opa,
+    group_by={"region": region}
+    )
+measures.define_measure(
+    name="patients_pfu4_region",
+    numerator=any_pfu4,
+    denominator=denominator & any_opa,
+    group_by={"region": region}
+    )
+measures.define_measure(
+    name="count_pfu5_region",
+    numerator=count_pfu5,
+    denominator=denominator & any_opa,
+    group_by={"region": region}
+    )
+measures.define_measure(
+    name="patients_pfu5_region",
+    numerator=any_pfu5,
+    denominator=denominator & any_opa,
+    group_by={"region": region}
+    )
