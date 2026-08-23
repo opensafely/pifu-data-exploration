@@ -27,7 +27,10 @@ prepare_measures <- function(file, output_file, region = FALSE) {
       rename(month = interval_start) %>%
       filter(!(measure %in% c(
         "count_opa", "patients_opa",
-        "count_pfu", "patients_pfu"
+        "count_pfu", "patients_pfu",
+        "count_opa", "patients_opa",
+        "count_pfu4", "patients_pfu4",
+        "count_pfu5", "patients_pfu5"
       ))) %>%
       pivot_wider(
         names_from = measure,
@@ -37,7 +40,9 @@ prepare_measures <- function(file, output_file, region = FALSE) {
         denominator_pfu = denominator_patients_pfu_region,
         denominator_opa = denominator_patients_opa_region,
         count_opa = numerator_count_opa_region,
-        count_pfu = numerator_count_pfu_region
+        count_pfu = numerator_count_pfu_region,
+        count_pfu4 = numerator_count_pfu4_region,
+        count_pfu5 = numerator_count_pfu5_region
       ) %>%
       select(
         -starts_with("numerator"),
